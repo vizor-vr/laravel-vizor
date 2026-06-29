@@ -1,0 +1,48 @@
+name: Sync Player Version
+
+on:
+  repository_dispatch:
+    types: [player-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Player version to sync (e.g. 0.2.0)'
+        required: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          VERSION="${{ github.event.client_payload.version || inputs.version }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update CDN version in config
+        run: |
+          sed -i "s/'player_version' => '.*'/'player_version' => '${{ steps.version.outputs.version }}'/" config/vizor.php
+
+      - name: Update CDN URL in config
+        run: |
+          sed -i "s|@vizor-vr/player@[^/]*/dist|@vizor-vr/player@${{ steps.version.outputs.version }}/dist|" config/vizor.php
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore: sync player version to ${{ steps.version.outputs.version }}"
+          body: |
+            Automated PR to sync the Vizor player CDN version.
+
+            - Updated `player_version` config default to `${{ steps.version.outputs.version }}`
+            - Updated CDN URL to reference new version
+
+            Triggered by: ${{ github.event_name }}
+          branch: "chore/sync-player-${{ steps.version.outputs.version }}"
+          commit-message: "chore: sync player version to ${{ steps.version.outputs.version }}"

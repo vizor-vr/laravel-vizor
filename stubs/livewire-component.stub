@@ -1,0 +1,82 @@
+<?php
+
+namespace {{ namespace }};
+
+use Livewire\Component;
+use Vizor\Laravel\Support\FormatEnum;
+
+class {{ class }} extends Component
+{
+    // Player props
+    public ?string $src = null;
+    public ?FormatEnum $format = null;
+    public ?string $title = null;
+    public ?string $poster = null;
+    public bool $controls = true;
+    public bool $autoplay = false;
+    public bool $loop = false;
+    public bool $muted = false;
+
+    // Reactive state
+    public bool $ready = false;
+    public bool $playing = false;
+    public float $currentTime = 0;
+    public float $duration = 0;
+    public float $volume = 1;
+
+    // Player commands
+    public function play(): void
+    {
+        $this->playing = true;
+        $this->dispatch('vizor-command', command: 'play');
+    }
+
+    public function pause(): void
+    {
+        $this->playing = false;
+        $this->dispatch('vizor-command', command: 'pause');
+    }
+
+    public function seek(float $time): void
+    {
+        $this->currentTime = $time;
+        $this->dispatch('vizor-command', command: 'seek', time: $time);
+    }
+
+    // Event handlers (called from Alpine bridge)
+    public function onReady(): void
+    {
+        $this->ready = true;
+    }
+
+    public function onPlay(): void
+    {
+        $this->playing = true;
+    }
+
+    public function onPause(): void
+    {
+        $this->playing = false;
+    }
+
+    public function onTimeUpdate(float $time, float $dur): void
+    {
+        $this->currentTime = $time;
+        $this->duration = $dur;
+    }
+
+    public function onEnded(): void
+    {
+        $this->playing = false;
+    }
+
+    public function onError(string $code, string $message): void
+    {
+        // Handle error
+    }
+
+    public function render()
+    {
+        return view('{{ view }}');
+    }
+}
