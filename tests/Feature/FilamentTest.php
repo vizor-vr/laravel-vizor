@@ -7,6 +7,16 @@ use Vizor\Laravel\Filament\Resources\ContentResource\Pages\ListContents;
 use Vizor\Laravel\Filament\VizorPlugin;
 use Vizor\Laravel\Filament\Widgets\VizorPlayerWidget;
 
+// Filament is an optional integration (composer "suggest"). When it isn't
+// installed (e.g. CI without filament/filament), skip these tests rather than
+// fatally erroring on the missing Filament\Contracts\Plugin interface. Add
+// filament/filament to require-dev to actually run them.
+beforeEach(function () {
+    if (! interface_exists(\Filament\Contracts\Plugin::class)) {
+        $this->markTestSkipped('Filament not installed — optional integration.');
+    }
+});
+
 // ──────────────────────────── VizorPlugin ────────────────────────────
 
 it('VizorPlugin getId returns vizor', function () {
