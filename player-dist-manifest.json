@@ -1,0 +1,5 @@
+{
+  "$comment": "Files the @vizor-vr/player npm package ships in dist/, per its package.json exports. PlayerScriptTest locks PlayerScript::DIST_ENTRY against this list so the Blade directive can never reference a file that does not exist in the published tarball (the 0.1.0 era shipped a URL that 404'd). Update alongside player releases (sync-player-version.yml bumps the version; a dist-layout change must update this manifest).",
+  "version": "0.2.0",
+  "entries": ["register.js", "vizor.js"]
+}

@@ -430,7 +430,7 @@ Publish the config file with `php artisan vendor:publish --tag=vizor-config`.
 | `api_key` | `VIZOR_API_KEY` | `null` | Your Vizor API key |
 | `license_key` | `VIZOR_LICENSE_KEY` | `null` | Standalone license key |
 | `license_mode` | `VIZOR_LICENSE_MODE` | `saas` | `saas` or `standalone` |
-| `cdn_url` | `VIZOR_CDN_URL` | `https://cdn.jsdelivr.net/npm/@vizor-vr/player@latest/dist` | Player script CDN URL |
+| `cdn_url` | `VIZOR_CDN_URL` | derived from `player_version` (never `@latest`) | Player script CDN URL |
 | `player_version` | `VIZOR_PLAYER_VERSION` | `0.1.0` | Player version |
 | `use_local_assets` | `VIZOR_USE_LOCAL_ASSETS` | `false` | Serve player JS from local assets |
 | `default_format` | -- | `MONO_360` | Default projection format |

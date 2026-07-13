@@ -13,12 +13,12 @@ describe('vizor config defaults', function () {
         expect($this->rawConfig['api_url'])->toBe('https://api.vizor-vr.com');
     });
 
-    it('has default cdn_url containing jsdelivr.net', function () {
-        expect($this->rawConfig['cdn_url'])->toContain('jsdelivr.net');
+    it('has a null cdn_url default (derived from player_version, never @latest)', function () {
+        expect($this->rawConfig['cdn_url'])->toBeNull();
     });
 
-    it('has default player_version of 0.1.0', function () {
-        expect($this->rawConfig['player_version'])->toBe('0.1.0');
+    it('has default player_version of 0.2.0', function () {
+        expect($this->rawConfig['player_version'])->toBe('0.2.0');
     });
 
     it('has default license_mode of saas', function () {

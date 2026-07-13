@@ -295,3 +295,29 @@ describe('VzAnnotation Blade component', function () {
     });
 
 });
+
+// ──────────────────────────── Caption (WS-G) ────────────────────────────
+
+it('renders x-vizor-caption as an HTML5 subtitles <track> (no vz-caption element exists)', function () {
+    $html = \Illuminate\Support\Facades\Blade::render(
+        '<x-vizor-caption src="/subs-en.vtt" srclang="en" label="English" :default="true" />'
+    );
+
+    expect($html)->toContain('<track');
+    expect($html)->toContain('kind="subtitles"');
+    expect($html)->toContain('src="/subs-en.vtt"');
+    expect($html)->toContain('srclang="en"');
+    expect($html)->toContain('label="English"');
+    expect($html)->toContain('default');
+    expect($html)->not->toContain('vz-caption');
+});
+
+it('x-vizor-caption omits label and default when not provided', function () {
+    $html = \Illuminate\Support\Facades\Blade::render(
+        '<x-vizor-caption src="/subs-fr.vtt" srclang="fr" />'
+    );
+
+    expect($html)->toContain('srclang="fr"');
+    expect($html)->not->toContain('label=');
+    expect($html)->not->toContain(' default');
+});

@@ -10,9 +10,17 @@ return [
     'license_mode' => env('VIZOR_LICENSE_MODE', 'saas'), // 'saas' or 'standalone'
 
     // ──────────────────────────── Player CDN ────────────────────────────
-    'cdn_url' => env('VIZOR_CDN_URL', 'https://cdn.jsdelivr.net/npm/@vizor-vr/player@latest/dist'),
-    'player_version' => env('VIZOR_PLAYER_VERSION', '0.1.0'),
+    // Null = derived from player_version (never @latest — a player publish
+    // must not silently change what production pages load).
+    'cdn_url' => env('VIZOR_CDN_URL'),
+    'player_version' => env('VIZOR_PLAYER_VERSION', '0.2.0'),
     'use_local_assets' => env('VIZOR_USE_LOCAL_ASSETS', false),
+
+    // ---------------------------- Auto-inject ----------------------------
+    // When true, the InjectVizorAssets middleware inserts the pinned player
+    // <script> before </head> on every HTML response. Default OFF -- prefer
+    // @vizorScripts on the pages that actually embed a player.
+    'auto_inject' => env('VIZOR_AUTO_INJECT', false),
 
     // ──────────────────────────── Defaults ────────────────────────────
     'default_format' => 'MONO_360',

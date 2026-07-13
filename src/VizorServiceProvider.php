@@ -9,6 +9,7 @@ use Vizor\Laravel\Commands\ExamplesCommand;
 use Vizor\Laravel\Commands\InstallCommand;
 use Vizor\Laravel\Commands\TestPageCommand;
 use Vizor\Laravel\Components\VzAnnotation;
+use Vizor\Laravel\Components\VzCaption;
 use Vizor\Laravel\Components\VzCinema;
 use Vizor\Laravel\Components\VzImg;
 use Vizor\Laravel\Components\VzLive;
@@ -78,22 +79,18 @@ class VizorServiceProvider extends ServiceProvider
         Blade::component('vizor-live', VzLive::class);
         Blade::component('vizor-playlist', VzPlaylist::class);
         Blade::component('vizor-annotation', VzAnnotation::class);
+        Blade::component('vizor-caption', VzCaption::class);
     }
 
     // ──────────────────────────── Blade Directives ────────────────────────────
 
     private function registerBladeDirectives(): void
     {
+        // The URL logic lives in PlayerScript so tests can lock it against the
+        // committed player-dist manifest (the 0.1.0 era pinned a dist file
+        // that no longer existed and 404'd silently on every page).
         Blade::directive('vizorScripts', function () {
-            $cdnUrl = config('vizor.cdn_url', 'https://cdn.jsdelivr.net/npm/@vizor-vr/player@latest/dist');
-            $useLocal = config('vizor.use_local_assets', false);
-
-            if ($useLocal) {
-                return '<?php echo \'<script type="module" src="\' . asset(\'js/vizor-alpine.js\') . \'"></script>\'; ?>'
-                    . '<?php echo \'<script type="module" src="\' . asset(\'vendor/vizor/vizor-player.register.es.js\') . \'"></script>\'; ?>';
-            }
-
-            return '<?php echo \'<script type="module" src="'.$cdnUrl.'/vizor-player.register.es.js"></script>\'; ?>';
+            return '<?php echo \Vizor\Laravel\Support\PlayerScript::tag(); ?>';
         });
     }
 
@@ -134,5 +131,8 @@ class VizorServiceProvider extends ServiceProvider
     private function registerMiddleware(): void
     {
         $this->app['router']->aliasMiddleware('vizor.license', \Vizor\Laravel\Middleware\ValidateVizorLicense::class);
+        // Auto-inject the pinned player script into HTML responses (WS-G).
+        // Config-gated (vizor.auto_inject, default OFF).
+        $this->app['router']->aliasMiddleware('vizor.inject', \Vizor\Laravel\Middleware\InjectVizorAssets::class);
     }
 }
