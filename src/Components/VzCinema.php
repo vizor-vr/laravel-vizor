@@ -28,7 +28,7 @@ final class VzCinema extends Component
         public readonly ?array $sources = null,
     ) {}
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('vizor::components.cinema');
     }

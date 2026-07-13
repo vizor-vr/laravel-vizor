@@ -15,7 +15,7 @@ final class VzPlaylist extends Component
         public readonly ?string $primaryColor = null,
     ) {}
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('vizor::components.playlist');
     }

@@ -21,7 +21,7 @@ final class VzImg extends Component
         public readonly bool $hideControls = false,
     ) {}
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('vizor::components.img');
     }

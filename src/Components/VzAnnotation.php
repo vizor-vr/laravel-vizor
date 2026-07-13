@@ -16,7 +16,7 @@ final class VzAnnotation extends Component
         public readonly ?int $sortOrder = null,
     ) {}
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('vizor::components.annotation');
     }
