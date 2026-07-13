@@ -13,24 +13,40 @@ class CinemaPlayer extends Component
 
     // Reactive state
     public float $currentTime = 0;
+
     public float $duration = 0;
+
     public float $volume = 1;
+
     public bool $playing = false;
+
     public bool $isMuted = false;
+
     public bool $ready = false;
 
     // Props
     public ?string $src = null;
+
     public ?FormatEnum $format = null;
+
     public ?string $title = null;
+
     public ?string $poster = null;
+
     public bool $loop = false;
+
     public bool $controls = true;
+
     public bool $autoplay = false;
+
     public ?string $apiKey = null;
+
     public ?string $licenseKey = null;
+
     public ?string $apiEndpoint = null;
+
     public ?string $primaryColor = null;
+
     public ?string $contentId = null;
 
     public function play(): void

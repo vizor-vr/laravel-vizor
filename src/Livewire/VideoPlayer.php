@@ -13,26 +13,44 @@ class VideoPlayer extends Component
 
     // Reactive state (wire:model bindable)
     public float $currentTime = 0;
+
     public float $duration = 0;
+
     public float $volume = 1;
+
     public bool $playing = false;
+
     public bool $isMuted = false;
+
     public bool $fullscreen = false;
+
     public bool $ready = false;
 
     // Props
     public ?string $src = null;
+
     public ?FormatEnum $format = null;
+
     public ?string $title = null;
+
     public ?string $poster = null;
+
     public bool $loop = false;
+
     public bool $controls = true;
+
     public bool $autoplay = false;
+
     public ?string $preload = null;
+
     public ?string $apiKey = null;
+
     public ?string $licenseKey = null;
+
     public ?string $apiEndpoint = null;
+
     public ?string $primaryColor = null;
+
     public ?string $contentId = null;
 
     public function play(): void

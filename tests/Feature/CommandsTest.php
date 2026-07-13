@@ -174,7 +174,7 @@ describe('vizor:test-page', function () {
 
         $contents = File::get($routePath);
         expect($contents)->toContain('vizor-test');
-        expect($contents)->toContain("Route::get");
+        expect($contents)->toContain('Route::get');
 
         // Cleanup
         File::delete($routePath);

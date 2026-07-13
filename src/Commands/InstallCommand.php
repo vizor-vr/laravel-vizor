@@ -53,7 +53,7 @@ class InstallCommand extends Command
 
     private function publishConfig(): void
     {
-        $source = dirname(__DIR__, 2) . '/config/vizor.php';
+        $source = dirname(__DIR__, 2).'/config/vizor.php';
         $destination = config_path('vizor.php');
 
         if (File::exists($destination) && ! $this->option('force')) {
@@ -69,7 +69,7 @@ class InstallCommand extends Command
 
     private function publishAlpinePlugin(): void
     {
-        $source = dirname(__DIR__, 2) . '/resources/js/vizor-alpine.js';
+        $source = dirname(__DIR__, 2).'/resources/js/vizor-alpine.js';
         $destination = resource_path('js/vizor-alpine.js');
 
         if (File::exists($destination) && ! $this->option('force')) {
@@ -112,7 +112,7 @@ class InstallCommand extends Command
 
         // Append to .env
         $separator = str_ends_with(trim($envContents), "\n") ? '' : "\n";
-        File::append($envPath, $separator . "\n# Vizor VR Player\nVIZOR_API_KEY={$apiKey}\n");
+        File::append($envPath, $separator."\n# Vizor VR Player\nVIZOR_API_KEY={$apiKey}\n");
         $this->info('  Saved VIZOR_API_KEY to .env');
     }
 }

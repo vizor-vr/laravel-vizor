@@ -2,6 +2,7 @@
 
 namespace Vizor\Laravel\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 final class VzAnnotation extends Component
@@ -16,7 +17,7 @@ final class VzAnnotation extends Component
         public readonly ?int $sortOrder = null,
     ) {}
 
-    public function render()
+    public function render(): View
     {
         return view('vizor::components.annotation');
     }

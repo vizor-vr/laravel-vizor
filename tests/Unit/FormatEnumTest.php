@@ -63,7 +63,7 @@ describe('FormatEnum', function () {
     it('returns true from supportsVideo() for all formats except CARDBOARD_PHOTO', function () {
         foreach (FormatEnum::cases() as $format) {
             if ($format === FormatEnum::CARDBOARD_PHOTO) {
-                expect($format->supportsVideo())->toBeFalse("CARDBOARD_PHOTO should not support video");
+                expect($format->supportsVideo())->toBeFalse('CARDBOARD_PHOTO should not support video');
             } else {
                 expect($format->supportsVideo())->toBeTrue("{$format->value} should support video");
             }

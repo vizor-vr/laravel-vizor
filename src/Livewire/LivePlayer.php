@@ -13,20 +13,32 @@ class LivePlayer extends Component
 
     // Reactive state
     public bool $playing = false;
+
     public bool $ready = false;
+
     public float $volume = 1;
+
     public bool $isMuted = false;
 
     // Props
     public ?string $src = null;
+
     public ?FormatEnum $format = null;
+
     public ?string $title = null;
+
     public ?string $poster = null;
+
     public bool $controls = true;
+
     public ?string $apiKey = null;
+
     public ?string $licenseKey = null;
+
     public ?string $apiEndpoint = null;
+
     public ?string $primaryColor = null;
+
     public ?string $contentId = null;
 
     public function play(): void

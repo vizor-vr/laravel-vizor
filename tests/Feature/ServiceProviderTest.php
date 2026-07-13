@@ -1,10 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
-use Vizor\Laravel\Commands\ComponentCommand;
-use Vizor\Laravel\Commands\ExamplesCommand;
-use Vizor\Laravel\Commands\InstallCommand;
-use Vizor\Laravel\Commands\TestPageCommand;
+use Illuminate\Support\ServiceProvider;
 use Vizor\Laravel\Components\VzAnnotation;
 use Vizor\Laravel\Components\VzCinema;
 use Vizor\Laravel\Components\VzImg;
@@ -12,6 +10,8 @@ use Vizor\Laravel\Components\VzLive;
 use Vizor\Laravel\Components\VzPlaylist;
 use Vizor\Laravel\Components\VzTour;
 use Vizor\Laravel\Components\VzVideo;
+use Vizor\Laravel\Facades\Vizor;
+use Vizor\Laravel\Middleware\ValidateVizorLicense;
 use Vizor\Laravel\VizorManager;
 
 describe('VizorServiceProvider', function () {
@@ -47,7 +47,7 @@ describe('VizorServiceProvider', function () {
     // ──────────────────────────── Facade ────────────────────────────
 
     it('resolves the Vizor facade accessor to VizorManager', function () {
-        $resolved = \Vizor\Laravel\Facades\Vizor::getFacadeRoot();
+        $resolved = Vizor::getFacadeRoot();
 
         expect($resolved)->toBeInstanceOf(VizorManager::class);
     });
@@ -114,13 +114,13 @@ describe('VizorServiceProvider', function () {
         $middleware = $router->getMiddleware();
 
         expect($middleware)->toHaveKey('vizor.license');
-        expect($middleware['vizor.license'])->toBe(\Vizor\Laravel\Middleware\ValidateVizorLicense::class);
+        expect($middleware['vizor.license'])->toBe(ValidateVizorLicense::class);
     });
 
     // ──────────────────────────── Commands ────────────────────────────
 
     it('registers artisan commands when running in console', function () {
-        $commands = \Illuminate\Support\Facades\Artisan::all();
+        $commands = Artisan::all();
 
         expect($commands)->toHaveKey('vizor:install');
         expect($commands)->toHaveKey('vizor:component');
@@ -131,7 +131,7 @@ describe('VizorServiceProvider', function () {
     // ──────────────────────────── Publishing ────────────────────────────
 
     it('has publishable groups for config, assets, and views', function () {
-        $groups = \Illuminate\Support\ServiceProvider::$publishGroups;
+        $groups = ServiceProvider::$publishGroups;
 
         expect($groups)->toHaveKey('vizor-config');
         expect($groups)->toHaveKey('vizor-assets');
@@ -139,7 +139,7 @@ describe('VizorServiceProvider', function () {
     });
 
     it('publishes the vizor config file from the correct source', function () {
-        $groups = \Illuminate\Support\ServiceProvider::$publishGroups;
+        $groups = ServiceProvider::$publishGroups;
 
         $configPaths = $groups['vizor-config'];
         $sources = array_keys($configPaths);

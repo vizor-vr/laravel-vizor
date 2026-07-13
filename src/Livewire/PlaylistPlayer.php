@@ -11,18 +11,28 @@ class PlaylistPlayer extends Component
 
     // Reactive state
     public int $currentIndex = 0;
+
     public ?string $currentTitle = null;
+
     public int $totalItems = 0;
+
     public bool $playing = false;
+
     public bool $ready = false;
 
     // Props
     public bool $autoplay = false;
+
     public bool $loopPlaylist = false;
+
     public ?string $panel = null;
+
     public ?string $apiKey = null;
+
     public ?string $licenseKey = null;
+
     public ?string $primaryColor = null;
+
     public ?string $contentId = null;
 
     public function next(): void

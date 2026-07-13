@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
+use Vizor\Laravel\Api\Client;
+use Vizor\Laravel\Api\LicenseKeysApi;
 use Vizor\Laravel\Facades\Vizor;
 
 describe('Vizor Facade', function () {
@@ -148,11 +150,11 @@ describe('Vizor Facade', function () {
         Http::fake(['*' => Http::response(['valid' => true], 200)]);
 
         // Use a fresh Client + API instance to avoid singleton cache issues
-        $client = new \Vizor\Laravel\Api\Client(
+        $client = new Client(
             baseUrl: config('vizor.api_url'),
             apiKey: config('vizor.api_key'),
         );
-        $api = new \Vizor\Laravel\Api\LicenseKeysApi($client);
+        $api = new LicenseKeysApi($client);
         $result = $api->validate('test-key');
 
         expect($result)->toBeTrue();
@@ -166,11 +168,11 @@ describe('Vizor Facade', function () {
     it('returns false from licenseKeys()->validate() when API says invalid', function () {
         Http::fake(['*' => Http::response(['valid' => false], 200)]);
 
-        $client = new \Vizor\Laravel\Api\Client(
+        $client = new Client(
             baseUrl: config('vizor.api_url'),
             apiKey: config('vizor.api_key'),
         );
-        $api = new \Vizor\Laravel\Api\LicenseKeysApi($client);
+        $api = new LicenseKeysApi($client);
         $result = $api->validate('bad-key');
 
         expect($result)->toBeFalse();

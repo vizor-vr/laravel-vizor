@@ -35,7 +35,7 @@ class ComponentCommand extends Command
         $this->info('');
         $this->info("  Vizor component \"{$studlyName}\" created successfully!");
         $this->info('');
-        $this->comment("  Usage in Blade:");
+        $this->comment('  Usage in Blade:');
         $this->comment("    <livewire:{$kebabName} src=\"/path/to/video.mp4\" format=\"MONO_360\" />");
         $this->info('');
 

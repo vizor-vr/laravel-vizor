@@ -9,47 +9,86 @@ final class EventMap
 {
     // Standard HTML5 media events
     public const PLAY = 'play';
+
     public const PAUSE = 'pause';
+
     public const PLAYING = 'playing';
+
     public const SEEKING = 'seeking';
+
     public const SEEKED = 'seeked';
+
     public const ENDED = 'ended';
+
     public const LOADSTART = 'loadstart';
+
     public const PROGRESS = 'progress';
+
     public const SUSPEND = 'suspend';
+
     public const ABORT = 'abort';
+
     public const ERROR = 'error';
+
     public const EMPTIED = 'emptied';
+
     public const STALLED = 'stalled';
+
     public const LOADED_METADATA = 'loadedmetadata';
+
     public const LOADED_DATA = 'loadeddata';
+
     public const CAN_PLAY = 'canplay';
+
     public const CAN_PLAY_THROUGH = 'canplaythrough';
+
     public const DURATION_CHANGE = 'durationchange';
+
     public const TIME_UPDATE = 'timeupdate';
+
     public const RATE_CHANGE = 'ratechange';
+
     public const RESIZE = 'resize';
+
     public const VOLUME_CHANGE = 'volumechange';
+
     public const WAITING = 'waiting';
 
     // Vizor custom events
     public const VZ_READY = 'vz-ready';
+
     public const VZ_LOADING_START = 'vz-loading-start';
+
     public const VZ_LOADING_PROGRESS = 'vz-loading-progress';
+
     public const VZ_LOADING_COMPLETE = 'vz-loading-complete';
+
     public const VZ_QUALITY_CHANGE = 'vz-quality-change';
+
     public const VZ_XR_ENTER = 'vz-xr-enter';
+
     public const VZ_XR_EXIT = 'vz-xr-exit';
+
     public const VZ_FULLSCREEN_ENTER = 'vz-fullscreen-enter';
+
     public const VZ_FULLSCREEN_EXIT = 'vz-fullscreen-exit';
+
     public const VZ_ORIENTATION_CHANGE = 'vz-orientation-change';
+
     public const VZ_TOUR_NAVIGATE = 'vz-tour-navigate';
+
     public const VZ_CHAPTER_CHANGE = 'vz-chapter-change';
+
     public const VZ_COLLAB_JOIN = 'vz-collab-join';
+
     public const VZ_COLLAB_LEAVE = 'vz-collab-leave';
+
     public const VZ_ERROR = 'vz-error';
+
     public const VZ_LICENSE = 'vz-license';
+
     public const VZ_PLAYLIST_CHANGE = 'vz-playlist-change';
+
     public const VZ_PLAYLIST_END = 'vz-playlist-end';
 
     /**

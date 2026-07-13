@@ -2,6 +2,7 @@
 
 namespace Vizor\Laravel\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use Vizor\Laravel\Support\FormatEnum;
 
@@ -28,7 +29,7 @@ final class VzVideo extends Component
         public readonly ?array $sources = null,
     ) {}
 
-    public function render()
+    public function render(): View
     {
         return view('vizor::components.video');
     }

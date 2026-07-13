@@ -8,7 +8,13 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#Unsafe usage of new static#'
+        # larastan cannot resolve `vizor::` namespaced package views at analysis
+        # time (they register at boot), so view() literals flag as non-view-string.
+        - '#Parameter \#1 \$view of function view expects view-string#'
 
     excludePaths:
         - stubs
+        # Filament is an optional integration; its classes are absent unless
+        # filament/filament is installed (mirrors the Pest suite, which skips
+        # Filament tests in that case), so analysing it is pure noise.
+        - src/Filament

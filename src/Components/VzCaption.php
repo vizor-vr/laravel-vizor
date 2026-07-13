@@ -2,6 +2,7 @@
 
 namespace Vizor\Laravel\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 /**
@@ -24,7 +25,7 @@ final class VzCaption extends Component
         public readonly bool $default = false,
     ) {}
 
-    public function render()
+    public function render(): View
     {
         return view('vizor::components.caption');
     }
