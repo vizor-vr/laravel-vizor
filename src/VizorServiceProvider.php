@@ -4,6 +4,7 @@ namespace Vizor\Laravel;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Vizor\Laravel\Commands\ComponentCommand;
 use Vizor\Laravel\Commands\ExamplesCommand;
 use Vizor\Laravel\Commands\InstallCommand;
@@ -22,6 +23,8 @@ use Vizor\Laravel\Livewire\LivePlayer;
 use Vizor\Laravel\Livewire\PlaylistPlayer;
 use Vizor\Laravel\Livewire\TourViewer;
 use Vizor\Laravel\Livewire\VideoPlayer;
+use Vizor\Laravel\Middleware\InjectVizorAssets;
+use Vizor\Laravel\Middleware\ValidateVizorLicense;
 
 class VizorServiceProvider extends ServiceProvider
 {
@@ -98,16 +101,16 @@ class VizorServiceProvider extends ServiceProvider
 
     private function registerLivewireComponents(): void
     {
-        if (! class_exists(\Livewire\Livewire::class)) {
+        if (! class_exists(Livewire::class)) {
             return;
         }
 
-        \Livewire\Livewire::component('vizor-video-player', VideoPlayer::class);
-        \Livewire\Livewire::component('vizor-img-viewer', ImgViewer::class);
-        \Livewire\Livewire::component('vizor-tour-viewer', TourViewer::class);
-        \Livewire\Livewire::component('vizor-cinema-player', CinemaPlayer::class);
-        \Livewire\Livewire::component('vizor-live-player', LivePlayer::class);
-        \Livewire\Livewire::component('vizor-playlist-player', PlaylistPlayer::class);
+        Livewire::component('vizor-video-player', VideoPlayer::class);
+        Livewire::component('vizor-img-viewer', ImgViewer::class);
+        Livewire::component('vizor-tour-viewer', TourViewer::class);
+        Livewire::component('vizor-cinema-player', CinemaPlayer::class);
+        Livewire::component('vizor-live-player', LivePlayer::class);
+        Livewire::component('vizor-playlist-player', PlaylistPlayer::class);
     }
 
     // ──────────────────────────── Commands ────────────────────────────
@@ -130,9 +133,9 @@ class VizorServiceProvider extends ServiceProvider
 
     private function registerMiddleware(): void
     {
-        $this->app['router']->aliasMiddleware('vizor.license', \Vizor\Laravel\Middleware\ValidateVizorLicense::class);
+        $this->app['router']->aliasMiddleware('vizor.license', ValidateVizorLicense::class);
         // Auto-inject the pinned player script into HTML responses (WS-G).
         // Config-gated (vizor.auto_inject, default OFF).
-        $this->app['router']->aliasMiddleware('vizor.inject', \Vizor\Laravel\Middleware\InjectVizorAssets::class);
+        $this->app['router']->aliasMiddleware('vizor.inject', InjectVizorAssets::class);
     }
 }

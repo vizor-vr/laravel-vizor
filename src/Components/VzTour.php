@@ -2,6 +2,7 @@
 
 namespace Vizor\Laravel\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use Vizor\Laravel\Support\FormatEnum;
 
@@ -22,7 +23,7 @@ final class VzTour extends Component
         public readonly bool $hideControls = false,
     ) {}
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('vizor::components.tour');
     }

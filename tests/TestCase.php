@@ -4,6 +4,7 @@ namespace Vizor\Laravel\Tests;
 
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Vizor\Laravel\Facades\Vizor;
 use Vizor\Laravel\VizorServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
@@ -19,7 +20,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function getPackageAliases($app): array
     {
         return [
-            'Vizor' => \Vizor\Laravel\Facades\Vizor::class,
+            'Vizor' => Vizor::class,
         ];
     }
 

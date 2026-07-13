@@ -2,7 +2,9 @@
 
 namespace Vizor\Laravel\Api;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -30,8 +32,8 @@ class Client
                 'Accept' => 'application/json',
             ])
             ->timeout($this->timeout)
-            ->retry($this->retryTimes, $this->retryDelay, fn ($e, $request) => $e instanceof \Illuminate\Http\Client\ConnectionException
-                || ($e instanceof \Illuminate\Http\Client\RequestException && $e->response->status() === 429)
+            ->retry($this->retryTimes, $this->retryDelay, fn ($e, $request) => $e instanceof ConnectionException
+                || ($e instanceof RequestException && $e->response->status() === 429)
             );
     }
 

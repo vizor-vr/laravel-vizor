@@ -1,9 +1,8 @@
 <?php
 
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 use Vizor\Laravel\Filament\Resources\ContentResource;
-use Vizor\Laravel\Filament\Resources\ContentResource\Pages\CreateContent;
-use Vizor\Laravel\Filament\Resources\ContentResource\Pages\EditContent;
-use Vizor\Laravel\Filament\Resources\ContentResource\Pages\ListContents;
 use Vizor\Laravel\Filament\VizorPlugin;
 use Vizor\Laravel\Filament\Widgets\VizorPlayerWidget;
 
@@ -12,7 +11,7 @@ use Vizor\Laravel\Filament\Widgets\VizorPlayerWidget;
 // fatally erroring on the missing Filament\Contracts\Plugin interface. Add
 // filament/filament to require-dev to actually run them.
 beforeEach(function () {
-    if (! interface_exists(\Filament\Contracts\Plugin::class)) {
+    if (! interface_exists(Plugin::class)) {
         $this->markTestSkipped('Filament not installed — optional integration.');
     }
 });
@@ -94,7 +93,7 @@ it('VizorPlugin register method does not throw when filament disabled', function
     // Create a minimal mock panel to verify register does not add resources
     // when filament is disabled. We use a simple approach: create a real
     // plugin instance and ensure calling register with a mock does not throw.
-    $panel = Mockery::mock(\Filament\Panel::class);
+    $panel = Mockery::mock(Panel::class);
 
     // When disabled, register() should return early without calling $panel->resources()
     $panel->shouldNotReceive('resources');
@@ -108,7 +107,7 @@ it('VizorPlugin registers resources and widgets when filament is enabled', funct
 
     $plugin = VizorPlugin::make();
 
-    $panel = Mockery::mock(\Filament\Panel::class);
+    $panel = Mockery::mock(Panel::class);
 
     // When enabled, register() should call resources() and widgets()
     $panel->shouldReceive('resources')

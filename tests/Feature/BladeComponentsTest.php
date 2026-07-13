@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Blade;
 use Vizor\Laravel\Support\FormatEnum;
 
 // ══════════════════════════════════════════════════════════════════════
@@ -249,8 +250,8 @@ describe('VzPlaylist Blade component', function () {
 
     it('passes slot content through for playlist items', function () {
         $view = $this->blade(
-            '<x-vizor-playlist>' .
-            '<x-vizor-video src="a.mp4" />' .
+            '<x-vizor-playlist>'.
+            '<x-vizor-video src="a.mp4" />'.
             '</x-vizor-playlist>'
         );
 
@@ -299,7 +300,7 @@ describe('VzAnnotation Blade component', function () {
 // ──────────────────────────── Caption (WS-G) ────────────────────────────
 
 it('renders x-vizor-caption as an HTML5 subtitles <track> (no vz-caption element exists)', function () {
-    $html = \Illuminate\Support\Facades\Blade::render(
+    $html = Blade::render(
         '<x-vizor-caption src="/subs-en.vtt" srclang="en" label="English" :default="true" />'
     );
 
@@ -313,7 +314,7 @@ it('renders x-vizor-caption as an HTML5 subtitles <track> (no vz-caption element
 });
 
 it('x-vizor-caption omits label and default when not provided', function () {
-    $html = \Illuminate\Support\Facades\Blade::render(
+    $html = Blade::render(
         '<x-vizor-caption src="/subs-fr.vtt" srclang="fr" />'
     );
 

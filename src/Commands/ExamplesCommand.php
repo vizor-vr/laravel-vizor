@@ -4,6 +4,7 @@ namespace Vizor\Laravel\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ExamplesCommand extends Command
 {
@@ -101,7 +102,7 @@ class ExamplesCommand extends Command
 
     private function toKebab(string $studly): string
     {
-        return \Illuminate\Support\Str::kebab($studly);
+        return Str::kebab($studly);
     }
 
     // ──────────────────────────── Class Stubs ────────────────────────────

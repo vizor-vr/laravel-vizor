@@ -2,6 +2,7 @@
 
 namespace Vizor\Laravel\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 final class VzPlaylist extends Component
@@ -15,7 +16,7 @@ final class VzPlaylist extends Component
         public readonly ?string $primaryColor = null,
     ) {}
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('vizor::components.playlist');
     }

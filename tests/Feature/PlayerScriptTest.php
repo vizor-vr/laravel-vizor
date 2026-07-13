@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Blade;
 use Vizor\Laravel\Support\PlayerScript;
 
 /**
@@ -49,7 +50,7 @@ describe('PlayerScript (player pin integrity)', function () {
 
     it('the @vizorScripts directive emits the tag', function () {
         config(['vizor.cdn_url' => null, 'vizor.player_version' => '0.2.0', 'vizor.use_local_assets' => false]);
-        $compiled = \Illuminate\Support\Facades\Blade::compileString('@vizorScripts');
+        $compiled = Blade::compileString('@vizorScripts');
         expect($compiled)->toContain('PlayerScript::tag()');
         expect(PlayerScript::tag())->toContain('<script type="module"');
         expect(PlayerScript::tag())->toContain('/dist/register.js');

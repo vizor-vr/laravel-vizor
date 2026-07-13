@@ -14,13 +14,21 @@ function createPropsStub(array $overrides = []): object
         use HasVizorProps;
 
         public ?string $src = null;
+
         public ?FormatEnum $format = null;
+
         public ?string $title = null;
+
         public ?string $poster = null;
+
         public ?string $apiKey = null;
+
         public ?string $licenseKey = null;
+
         public ?string $apiEndpoint = null;
+
         public ?string $primaryColor = null;
+
         public ?string $contentId = null;
 
         public function __construct(array $overrides)

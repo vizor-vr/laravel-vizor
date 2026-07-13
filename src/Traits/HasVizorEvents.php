@@ -2,6 +2,13 @@
 
 namespace Vizor\Laravel\Traits;
 
+use Vizor\Laravel\Events\PlayerEnded;
+use Vizor\Laravel\Events\PlayerError;
+use Vizor\Laravel\Events\PlayerPause;
+use Vizor\Laravel\Events\PlayerPlay;
+use Vizor\Laravel\Events\PlayerReady;
+use Vizor\Laravel\Events\PlayerTimeUpdate;
+
 /**
  * Shared event dispatching for Vizor Livewire components.
  * Handles optional broadcasting integration when enabled.
@@ -35,12 +42,12 @@ trait HasVizorEvents
     private function resolveEventClass(string $eventName): ?string
     {
         return match ($eventName) {
-            'player.ready' => \Vizor\Laravel\Events\PlayerReady::class,
-            'player.play' => \Vizor\Laravel\Events\PlayerPlay::class,
-            'player.pause' => \Vizor\Laravel\Events\PlayerPause::class,
-            'player.ended' => \Vizor\Laravel\Events\PlayerEnded::class,
-            'player.error' => \Vizor\Laravel\Events\PlayerError::class,
-            'player.timeupdate' => \Vizor\Laravel\Events\PlayerTimeUpdate::class,
+            'player.ready' => PlayerReady::class,
+            'player.play' => PlayerPlay::class,
+            'player.pause' => PlayerPause::class,
+            'player.ended' => PlayerEnded::class,
+            'player.error' => PlayerError::class,
+            'player.timeupdate' => PlayerTimeUpdate::class,
             default => null,
         };
     }

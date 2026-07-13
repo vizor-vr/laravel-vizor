@@ -3,6 +3,7 @@
 namespace Vizor\Laravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Vizor\Laravel\VizorManager;
 
 /**
  * @method static \Vizor\Laravel\Api\Client client()
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Vizor\Laravel\Api\LicenseKeysApi licenseKeys()
  * @method static \Vizor\Laravel\Api\BillingApi billing()
  *
- * @see \Vizor\Laravel\VizorManager
+ * @see VizorManager
  */
 class Vizor extends Facade
 {
