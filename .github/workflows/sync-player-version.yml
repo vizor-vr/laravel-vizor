@@ -25,13 +25,14 @@ jobs:
           VERSION="${{ github.event.client_payload.version || inputs.version }}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Update CDN version in config
+      - name: Update player version pins
         run: |
-          sed -i "s/'player_version' => '.*'/'player_version' => '${{ steps.version.outputs.version }}'/" config/vizor.php
-
-      - name: Update CDN URL in config
-        run: |
-          sed -i "s|@vizor-vr/player@[^/]*/dist|@vizor-vr/player@${{ steps.version.outputs.version }}/dist|" config/vizor.php
+          # Config default: 'player_version' => env('VIZOR_PLAYER_VERSION', 'X'),
+          sed -i "s/env('VIZOR_PLAYER_VERSION', '[^']*')/env('VIZOR_PLAYER_VERSION', '${{ steps.version.outputs.version }}')/" config/vizor.php
+          # Dist manifest version (entries change only on dist-layout changes).
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${{ steps.version.outputs.version }}\"/" player-dist-manifest.json
+          # PlayerScriptTest pins the shipped default explicitly.
+          sed -i "s/toBe('0\.[0-9.]*')/toBe('${{ steps.version.outputs.version }}')/g; s/player@0\.[0-9.]*\/dist/player@${{ steps.version.outputs.version }}\/dist/g" tests/Feature/PlayerScriptTest.php
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
@@ -41,7 +42,7 @@ jobs:
             Automated PR to sync the Vizor player CDN version.
 
             - Updated `player_version` config default to `${{ steps.version.outputs.version }}`
-            - Updated CDN URL to reference new version
+            - Updated player-dist-manifest.json + PlayerScriptTest pins
 
             Triggered by: ${{ github.event_name }}
           branch: "chore/sync-player-${{ steps.version.outputs.version }}"

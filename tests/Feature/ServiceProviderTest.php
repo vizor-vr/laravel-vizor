@@ -86,12 +86,14 @@ describe('VizorServiceProvider', function () {
         expect($directives)->toHaveKey('vizorScripts');
     });
 
-    it('outputs a script tag from @vizorScripts directive', function () {
+    it('outputs a pinned script tag from @vizorScripts directive', function () {
+        config(['vizor.cdn_url' => null, 'vizor.use_local_assets' => false]);
         $rendered = Blade::render('@vizorScripts');
 
         expect($rendered)->toContain('<script');
-        expect($rendered)->toContain('vizor-player.register.es.js');
+        expect($rendered)->toContain('/dist/register.js');
         expect($rendered)->toContain('type="module"');
+        expect($rendered)->not->toContain('@latest');
     });
 
     // ──────────────────────────── Views ────────────────────────────
