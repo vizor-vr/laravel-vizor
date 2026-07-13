@@ -11,10 +11,14 @@
 
 Please **do not** open a public GitHub issue for security problems.
 
-Email **security@vizor-vr.com** with a description of the issue, reproduction
+Email **security@utgnetworks.com** with a description of the issue, reproduction
 steps, and the affected version. You will receive an acknowledgement within
 72 hours and a status update within 14 days. We ask that you give us a
 reasonable window to ship a fix before public disclosure.
+
+This package is part of the Vizor VR platform; the org-wide disclosure policy
+lives at
+[vizor-vr/vizor-vr/SECURITY.md](https://github.com/vizor-vr/vizor-vr/blob/main/SECURITY.md).
 
 ## Scope notes
 

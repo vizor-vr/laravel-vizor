@@ -506,6 +506,11 @@ Tests cover: service provider registration, Blade components, Livewire component
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
+## Security
+
+Please report vulnerabilities privately per [SECURITY.md](SECURITY.md)
+(security@utgnetworks.com) - do not open public issues for security problems.
+
 ## License
 
 The MIT License (MIT). See [LICENSE](LICENSE) for details.
