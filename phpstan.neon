@@ -8,7 +8,6 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#Unsafe usage of new static#'
         # larastan cannot resolve `vizor::` namespaced package views at analysis
         # time (they register at boot), so view() literals flag as non-view-string.
         - '#Parameter \#1 \$view of function view expects view-string#'
