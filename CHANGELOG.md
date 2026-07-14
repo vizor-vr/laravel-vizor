@@ -11,7 +11,7 @@
 - `InjectVizorAssets` middleware (`vizor.inject` alias): opt-in auto-injection of the pinned player script before `</head>` (`vizor.auto_inject`, default off).
 - `SECURITY.md`.
 
-All notable changes to `vizor/laravel` will be documented in this file.
+All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ## [Unreleased]
 
