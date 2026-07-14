@@ -33,6 +33,10 @@ jobs:
           sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${{ steps.version.outputs.version }}\"/" player-dist-manifest.json
           # PlayerScriptTest pins the shipped default explicitly.
           sed -i "s/toBe('0\.[0-9.]*')/toBe('${{ steps.version.outputs.version }}')/g; s/player@0\.[0-9.]*\/dist/player@${{ steps.version.outputs.version }}\/dist/g" tests/Feature/PlayerScriptTest.php
+          # PlayerScript's runtime fallback default (used when config is absent).
+          sed -i "s/config('vizor.player_version', '[^']*')/config('vizor.player_version', '${{ steps.version.outputs.version }}')/" src/Support/PlayerScript.php
+          # ConfigTest asserts the shipped default (test name + assertion).
+          sed -i "s/player_version of 0\.[0-9.]*/player_version of ${{ steps.version.outputs.version }}/; s/toBe('0\.[0-9.]*')/toBe('${{ steps.version.outputs.version }}')/g" tests/Unit/ConfigTest.php
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
