@@ -27,14 +27,14 @@ describe('PlayerScript (player pin integrity)', function () {
         );
         $configDefaults = require __DIR__.'/../../config/vizor.php';
         // Bypass env overrides: assert the shipped default, not the test env.
-        expect($manifest['version'])->toBe('0.2.0');
-        expect(config('vizor.player_version'))->toBe('0.2.0');
+        expect($manifest['version'])->toBe('0.2.1');
+        expect(config('vizor.player_version'))->toBe('0.2.1');
     });
 
     it('pins the CDN URL to the configured version — never @latest', function () {
         config(['vizor.cdn_url' => null, 'vizor.player_version' => '0.2.0', 'vizor.use_local_assets' => false]);
         $url = PlayerScript::scriptUrl();
-        expect($url)->toBe('https://cdn.jsdelivr.net/npm/@vizor-vr/player@0.2.0/dist/register.js');
+        expect($url)->toBe('https://cdn.jsdelivr.net/npm/@vizor-vr/player@0.2.1/dist/register.js');
         expect($url)->not->toContain('@latest');
     });
 
