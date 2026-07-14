@@ -32,9 +32,11 @@ describe('PlayerScript (player pin integrity)', function () {
     });
 
     it('pins the CDN URL to the configured version — never @latest', function () {
-        config(['vizor.cdn_url' => null, 'vizor.player_version' => '0.2.0', 'vizor.use_local_assets' => false]);
+        // Deliberately version-agnostic (sentinel version): sync-player-version.yml's
+        // seds only rewrite 0.x pins, so this test can never be half-updated by a sync.
+        config(['vizor.cdn_url' => null, 'vizor.player_version' => '9.9.9', 'vizor.use_local_assets' => false]);
         $url = PlayerScript::scriptUrl();
-        expect($url)->toBe('https://cdn.jsdelivr.net/npm/@vizor-vr/player@0.2.1/dist/register.js');
+        expect($url)->toBe('https://cdn.jsdelivr.net/npm/@vizor-vr/player@9.9.9/dist/register.js');
         expect($url)->not->toContain('@latest');
     });
 
@@ -49,7 +51,7 @@ describe('PlayerScript (player pin integrity)', function () {
     });
 
     it('the @vizorScripts directive emits the tag', function () {
-        config(['vizor.cdn_url' => null, 'vizor.player_version' => '0.2.0', 'vizor.use_local_assets' => false]);
+        config(['vizor.cdn_url' => null, 'vizor.player_version' => '9.9.9', 'vizor.use_local_assets' => false]);
         $compiled = Blade::compileString('@vizorScripts');
         expect($compiled)->toContain('PlayerScript::tag()');
         expect(PlayerScript::tag())->toContain('<script type="module"');
