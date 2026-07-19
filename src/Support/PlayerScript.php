@@ -23,7 +23,7 @@ final class PlayerScript
             return rtrim($configured, '/');
         }
 
-        $version = (string) config('vizor.player_version', '0.2.1');
+        $version = (string) config('vizor.player_version', '0.3.0');
 
         return "https://cdn.jsdelivr.net/npm/@vizor-vr/player@{$version}/dist";
     }
