@@ -27,8 +27,8 @@ describe('PlayerScript (player pin integrity)', function () {
         );
         $configDefaults = require __DIR__.'/../../config/vizor.php';
         // Bypass env overrides: assert the shipped default, not the test env.
-        expect($manifest['version'])->toBe('0.2.1');
-        expect(config('vizor.player_version'))->toBe('0.2.1');
+        expect($manifest['version'])->toBe('0.3.0');
+        expect(config('vizor.player_version'))->toBe('0.3.0');
     });
 
     it('pins the CDN URL to the configured version — never @latest', function () {
