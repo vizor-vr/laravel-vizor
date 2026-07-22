@@ -37,6 +37,8 @@ jobs:
           sed -i "s/config('vizor.player_version', '[^']*')/config('vizor.player_version', '${{ steps.version.outputs.version }}')/" src/Support/PlayerScript.php
           # ConfigTest asserts the shipped default (test name + assertion).
           sed -i "s/player_version of 0\.[0-9.]*/player_version of ${{ steps.version.outputs.version }}/; s/toBe('0\.[0-9.]*')/toBe('${{ steps.version.outputs.version }}')/g" tests/Unit/ConfigTest.php
+          # README Configuration Reference row (ConfigTest guards this stays in sync).
+          sed -i 's/`player_version` | `VIZOR_PLAYER_VERSION` | `[^`]*`/`player_version` | `VIZOR_PLAYER_VERSION` | `${{ steps.version.outputs.version }}`/' README.md
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6

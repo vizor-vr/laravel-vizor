@@ -412,8 +412,6 @@ Publish the config file with `php artisan vendor:publish --tag=vizor-config`.
 | `cdn_url` | `VIZOR_CDN_URL` | derived from `player_version` (never `@latest`) | Player script CDN URL |
 | `player_version` | `VIZOR_PLAYER_VERSION` | `0.3.0` (kept in sync by `sync-player-version.yml`) | Player version |
 | `use_local_assets` | `VIZOR_USE_LOCAL_ASSETS` | `false` | Serve player JS from local assets |
-| `brand_name` | `VIZOR_BRAND_NAME` | `null` | Custom brand name |
-| `brand_logo` | `VIZOR_BRAND_LOGO` | `null` | Custom brand logo URL |
 | `validate_license` | `VIZOR_VALIDATE_LICENSE` | `true` | Enable license validation |
 | `license_cache_ttl` | `VIZOR_LICENSE_CACHE_TTL` | `3600` | License cache duration (seconds) |
 | `broadcasting.enabled` | `VIZOR_BROADCASTING` | `false` | Enable event broadcasting |

@@ -22,10 +22,6 @@ return [
     // @vizorScripts on the pages that actually embed a player.
     'auto_inject' => env('VIZOR_AUTO_INJECT', false),
 
-    // ──────────────────────────── Theming ────────────────────────────
-    'brand_name' => env('VIZOR_BRAND_NAME'),
-    'brand_logo' => env('VIZOR_BRAND_LOGO'),
-
     // ──────────────────────────── License Validation ────────────────────────────
     'validate_license' => env('VIZOR_VALIDATE_LICENSE', true),
     'license_cache_ttl' => (int) env('VIZOR_LICENSE_CACHE_TTL', 3600),

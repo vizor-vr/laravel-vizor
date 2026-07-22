@@ -6,9 +6,11 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ### Fixed
 - `BillingApi::plans()` threw `TypeError` when the API returned an empty response body; now falls back to `[]`.
+- README Configuration Reference said `player_version` defaults to `0.1.0` while the config ships `0.3.0`: `sync-player-version.yml` never updated the README row. The row is now synced by the workflow and locked by a ConfigTest assertion against the shipped default.
 
 ### Removed
 - Config keys `default_format`, `default_controls`, `default_muted`, and `primary_color` (with `VIZOR_PRIMARY_COLOR`): documented as working options but never read by any rendering path. Player defaults come from the player itself and from component props; forcing `format`/`primary-color` attributes from config would override content-API metadata and player-side theming.
+- Config keys `brand_name` and `brand_logo` (with `VIZOR_BRAND_NAME`/`VIZOR_BRAND_LOGO`): same problem — documented but read by nothing. Re-add when white-label theming is actually designed.
 
 ## 0.5.0 - 2026-07-22
 
