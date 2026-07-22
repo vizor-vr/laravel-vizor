@@ -174,6 +174,31 @@ it('uses cached result and does not call API again', function () {
     Http::assertNothingSent();
 });
 
+it('does not read a stale bool cached under the old key name', function () {
+    // The cache key changed from vizor_license_valid to vizor_license_status
+    // because the cached shape changed bool -> array{valid, tier}. A value
+    // left behind under the old key must never be read as the new array --
+    // this seeds the old key with a stale `true` and confirms the middleware
+    // ignores it and validates fresh under the new key instead.
+    config([
+        'vizor.validate_license' => true,
+        'vizor.license_mode' => 'saas',
+        'vizor.api_key' => 'k',
+    ]);
+
+    Cache::put('vizor_license_valid', true, 3600);
+
+    Http::fake([
+        '*/api/v1/license/validate' => Http::response(['valid' => false], 200),
+    ]);
+
+    $middleware = new ValidateVizorLicense;
+    $request = Request::create('/test');
+    $middleware->handle($request, fn ($r) => new Response('ok'));
+
+    expect(config('vizor.license_tier'))->toBe('free');
+});
+
 // ──────────────────────────── Error Handling ────────────────────────────
 
 it('degrades gracefully when validation throws an exception', function () {
