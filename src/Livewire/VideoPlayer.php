@@ -87,7 +87,10 @@ class VideoPlayer extends Component
     {
         $this->currentTime = $time;
         $this->duration = $dur;
-        $this->broadcastIfEnabled('player.timeupdate');
+        $this->broadcastIfEnabled('player.timeupdate', [
+            'currentTime' => $time,
+            'duration' => $dur,
+        ]);
     }
 
     public function onPlay(): void
