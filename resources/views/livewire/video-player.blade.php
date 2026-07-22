@@ -19,6 +19,10 @@
         @if($autoplay) autoplay @endif
         @if($preload) preload="{{ $preload }}" @endif
         @if($primaryColor) primary-color="{{ $primaryColor }}" @endif
+        @if($contentId) content-id="{{ $contentId }}" @endif
+        @if($apiKey) api-key="{{ $apiKey }}" @endif
+        @if($licenseKey) license-key="{{ $licenseKey }}" @endif
+        @if($apiEndpoint) api-endpoint="{{ $apiEndpoint }}" @endif
         style="width: 100%; aspect-ratio: 16/9;"
     >
         {{ $slot }}
