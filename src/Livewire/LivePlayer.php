@@ -7,6 +7,10 @@ use Vizor\Laravel\Support\FormatEnum;
 use Vizor\Laravel\Traits\HasVizorEvents;
 use Vizor\Laravel\Traits\HasVizorProps;
 
+/**
+ * Live streams have no seekable timeline, so this component intentionally has
+ * no onTimeUpdate handler and never broadcasts player.timeupdate.
+ */
 class LivePlayer extends Component
 {
     use HasVizorEvents, HasVizorProps;
@@ -56,6 +60,7 @@ class LivePlayer extends Component
     public function onReady(): void
     {
         $this->ready = true;
+        $this->broadcastIfEnabled('player.ready');
     }
 
     public function onPlay(): void
@@ -73,6 +78,7 @@ class LivePlayer extends Component
     public function onEnded(): void
     {
         $this->playing = false;
+        $this->broadcastIfEnabled('player.ended');
     }
 
     public function onVolumeChange(float $vol, bool $muted): void

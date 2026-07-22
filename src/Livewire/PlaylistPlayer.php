@@ -53,23 +53,31 @@ class PlaylistPlayer extends Component
     public function onReady(): void
     {
         $this->ready = true;
+        $this->broadcastIfEnabled('player.ready');
     }
 
     public function onPlay(): void
     {
         $this->playing = true;
+        $this->broadcastIfEnabled('player.play');
     }
 
     public function onPause(): void
     {
         $this->playing = false;
+        $this->broadcastIfEnabled('player.pause');
     }
 
     public function onEnded(): void
     {
         $this->playing = false;
+        $this->broadcastIfEnabled('player.ended');
     }
 
+    // Playlist-specific transitions (onPlaylistChange, onPlaylistEnd) are
+    // intentionally not broadcast: no corresponding broadcast event classes
+    // exist (see HasVizorEvents::resolveEventClass), and adding them would be
+    // new public API surface rather than a coverage fix.
     public function onPlaylistChange(int $index, string $title, int $total): void
     {
         $this->currentIndex = $index;

@@ -9,6 +9,9 @@ use Vizor\Laravel\Events\PlayerPause;
 use Vizor\Laravel\Events\PlayerPlay;
 use Vizor\Laravel\Events\PlayerReady;
 use Vizor\Laravel\Events\PlayerTimeUpdate;
+use Vizor\Laravel\Livewire\CinemaPlayer;
+use Vizor\Laravel\Livewire\LivePlayer;
+use Vizor\Laravel\Livewire\PlaylistPlayer;
 use Vizor\Laravel\Livewire\VideoPlayer;
 
 // ──────────────────────────── Interface / Contract ────────────────────────────
@@ -164,3 +167,104 @@ it('broadcasts the actual currentTime and duration on timeupdate', function () {
         fn (PlayerTimeUpdate $event) => $event->currentTime === 12.5 && $event->duration === 60.0
     );
 });
+
+it('VideoPlayer broadcasts player.ready when the player becomes ready', function () {
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([PlayerReady::class]);
+
+    Livewire::test(VideoPlayer::class, ['src' => '/v.mp4', 'contentId' => 'vid-1'])
+        ->call('onReady');
+
+    Event::assertDispatched(
+        PlayerReady::class,
+        fn (PlayerReady $event) => $event->contentId === 'vid-1'
+    );
+});
+
+// ──────────────────────────── CinemaPlayer broadcasts ────────────────────────────
+
+it('CinemaPlayer broadcasts player.ready when the player becomes ready', function () {
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([PlayerReady::class]);
+
+    Livewire::test(CinemaPlayer::class, ['src' => '/v.mp4', 'contentId' => 'cin-1'])
+        ->call('onReady');
+
+    Event::assertDispatched(
+        PlayerReady::class,
+        fn (PlayerReady $event) => $event->contentId === 'cin-1'
+    );
+});
+
+it('CinemaPlayer broadcasts the actual currentTime and duration on timeupdate', function () {
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([PlayerTimeUpdate::class]);
+
+    Livewire::test(CinemaPlayer::class, ['src' => '/v.mp4'])
+        ->call('onTimeUpdate', 33.25, 90.0);
+
+    Event::assertDispatched(
+        PlayerTimeUpdate::class,
+        fn (PlayerTimeUpdate $event) => $event->currentTime === 33.25 && $event->duration === 90.0
+    );
+});
+
+// ──────────────────────────── LivePlayer broadcasts ────────────────────────────
+
+it('LivePlayer broadcasts player.ready when the stream becomes ready', function () {
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([PlayerReady::class]);
+
+    Livewire::test(LivePlayer::class, ['src' => '/stream.m3u8', 'contentId' => 'live-1'])
+        ->call('onReady');
+
+    Event::assertDispatched(
+        PlayerReady::class,
+        fn (PlayerReady $event) => $event->contentId === 'live-1'
+    );
+});
+
+it('LivePlayer broadcasts player.ended when the stream ends', function () {
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([PlayerEnded::class]);
+
+    Livewire::test(LivePlayer::class, ['src' => '/stream.m3u8', 'contentId' => 'live-1'])
+        ->call('onEnded');
+
+    Event::assertDispatched(
+        PlayerEnded::class,
+        fn (PlayerEnded $event) => $event->contentId === 'live-1'
+    );
+});
+
+// ──────────────────────────── PlaylistPlayer broadcasts ────────────────────────────
+
+it('PlaylistPlayer broadcasts lifecycle events', function (string $method, string $eventClass) {
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([$eventClass]);
+
+    Livewire::test(PlaylistPlayer::class, ['contentId' => 'pl-1'])
+        ->call($method);
+
+    Event::assertDispatched(
+        $eventClass,
+        fn (object $event) => $event->contentId === 'pl-1'
+    );
+})->with([
+    'ready' => ['onReady', PlayerReady::class],
+    'play' => ['onPlay', PlayerPlay::class],
+    'pause' => ['onPause', PlayerPause::class],
+    'ended' => ['onEnded', PlayerEnded::class],
+]);

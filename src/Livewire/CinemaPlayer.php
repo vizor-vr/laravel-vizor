@@ -70,12 +70,17 @@ class CinemaPlayer extends Component
     public function onReady(): void
     {
         $this->ready = true;
+        $this->broadcastIfEnabled('player.ready');
     }
 
     public function onTimeUpdate(float $time, float $dur): void
     {
         $this->currentTime = $time;
         $this->duration = $dur;
+        $this->broadcastIfEnabled('player.timeupdate', [
+            'currentTime' => $time,
+            'duration' => $dur,
+        ]);
     }
 
     public function onPlay(): void
