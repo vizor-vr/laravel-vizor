@@ -27,7 +27,7 @@ it('always calls next middleware regardless of validation outcome', function () 
 
     // API returns invalid
     Http::fake([
-        '*/api/v1/api-keys/validate' => Http::response(['valid' => false], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => false], 200),
     ]);
 
     Cache::forget('vizor_license_valid');
@@ -49,7 +49,7 @@ it('passes through in saas mode with valid API key', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/api-keys/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => true], 200),
     ]);
 
     Cache::forget('vizor_license_valid');
@@ -70,7 +70,7 @@ it('degrades to free tier in saas mode with invalid API key', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/api-keys/validate' => Http::response(['valid' => false], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => false], 200),
     ]);
 
     Cache::forget('vizor_license_valid');
@@ -136,7 +136,7 @@ it('caches the validation result', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/api-keys/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => true], 200),
     ]);
 
     Cache::forget('vizor_license_valid');
@@ -163,7 +163,7 @@ it('uses cached result and does not call API again', function () {
     Cache::put('vizor_license_valid', true, 3600);
 
     Http::fake([
-        '*/api/v1/api-keys/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => true], 200),
     ]);
 
     $middleware = new ValidateVizorLicense;
@@ -185,7 +185,7 @@ it('degrades gracefully when validation throws an exception', function () {
 
     // Simulate a network error
     Http::fake([
-        '*/api/v1/api-keys/validate' => Http::response(null, 500),
+        '*/api/v1/license/validate' => Http::response(null, 500),
     ]);
 
     Cache::forget('vizor_license_valid');
