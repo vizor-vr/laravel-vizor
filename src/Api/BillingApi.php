@@ -18,6 +18,6 @@ class BillingApi
      */
     public function plans(): array
     {
-        return $this->client->get('/api/v1/billing/plans')->json();
+        return $this->client->get('/api/v1/billing/plans')->json() ?? [];
     }
 }

@@ -4,6 +4,9 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- `BillingApi::plans()` threw `TypeError` when the API returned an empty response body; now falls back to `[]`.
+
 ## 0.5.0 - 2026-07-22
 
 ### Removed
