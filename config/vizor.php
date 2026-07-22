@@ -13,7 +13,7 @@ return [
     // Null = derived from player_version (never @latest — a player publish
     // must not silently change what production pages load).
     'cdn_url' => env('VIZOR_CDN_URL'),
-    'player_version' => env('VIZOR_PLAYER_VERSION', '0.3.0'),
+    'player_version' => env('VIZOR_PLAYER_VERSION', '0.4.0'),
     'use_local_assets' => env('VIZOR_USE_LOCAL_ASSETS', false),
 
     // ---------------------------- Auto-inject ----------------------------

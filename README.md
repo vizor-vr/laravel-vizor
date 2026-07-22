@@ -410,7 +410,7 @@ Publish the config file with `php artisan vendor:publish --tag=vizor-config`.
 | `license_key` | `VIZOR_LICENSE_KEY` | `null` | Standalone license key |
 | `license_mode` | `VIZOR_LICENSE_MODE` | `saas` | `saas` or `standalone` |
 | `cdn_url` | `VIZOR_CDN_URL` | derived from `player_version` (never `@latest`) | Player script CDN URL |
-| `player_version` | `VIZOR_PLAYER_VERSION` | `0.3.0` (kept in sync by `sync-player-version.yml`) | Player version |
+| `player_version` | `VIZOR_PLAYER_VERSION` | `0.4.0` (kept in sync by `sync-player-version.yml`) | Player version |
 | `use_local_assets` | `VIZOR_USE_LOCAL_ASSETS` | `false` | Serve player JS from local assets |
 | `validate_license` | `VIZOR_VALIDATE_LICENSE` | `true` | Enable license validation |
 | `license_cache_ttl` | `VIZOR_LICENSE_CACHE_TTL` | `3600` | License cache duration (seconds) |
