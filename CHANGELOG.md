@@ -4,8 +4,11 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ## [Unreleased]
 
+## 0.6.0 - 2026-07-22
+
 ### Fixed
 - `BillingApi::plans()` threw `TypeError` when the API returned an empty response body; now falls back to `[]`.
+- `CinemaPlayer`, `LivePlayer`, and `PlaylistPlayer` silently skipped broadcast events that `VideoPlayer` emitted: Cinema never broadcast `player.ready`/`player.timeupdate`, Live never broadcast `player.ready`/`player.ended`, and Playlist broadcast nothing at all. All players now broadcast the README-documented event set (`LivePlayer` intentionally never broadcasts `player.timeupdate` — live streams have no seekable timeline; playlist-specific transitions stay unbroadcast pending dedicated event classes).
 - README Configuration Reference said `player_version` defaults to `0.1.0` while the config ships `0.3.0`: `sync-player-version.yml` never updated the README row. The row is now synced by the workflow and locked by a ConfigTest assertion against the shipped default.
 
 ### Removed
