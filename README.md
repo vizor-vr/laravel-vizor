@@ -248,57 +248,33 @@ The `vizorPlayer` data component exposes: `ready`, `playing`, `currentTime`, `du
 
 ## Vizor Facade
 
-The `Vizor` facade provides typed access to the Vizor REST API. It is backed by the `VizorManager` class and configured via `VIZOR_API_KEY` and `VIZOR_API_URL`.
+The `Vizor` facade provides typed access to the server-callable surface of the Vizor REST API. It is backed by the `VizorManager` class and configured via `VIZOR_API_KEY` and `VIZOR_API_URL`.
 
-### Content
+> **Scope note:** the facade deliberately covers only endpoints a server can reach. Management surfaces — content CRUD, analytics dashboards, API/license key administration, billing status — require a Clerk user session (dashboard login) on the Vizor API; a server-held API key cannot authenticate against them, so this package does not expose them.
+
+### License validation
 
 ```php
 use Vizor\Laravel\Facades\Vizor;
 
-// List content
-$items = Vizor::content()->list(search: 'ocean', limit: 10);
+// SaaS mode: validate the configured API key (bool)
+$valid = Vizor::apiKeys()->validate($apiKey, $domain);
 
-// CRUD
-$item = Vizor::content()->create('New Video', 'MONO_360', ['src' => '...']);
-$item = Vizor::content()->get($id);
-Vizor::content()->update($id, ['title' => 'Updated Title']);
-Vizor::content()->delete($id);
+// Full result: ['valid' => bool, 'tier' => string]
+$result = Vizor::apiKeys()->validateDetailed($apiKey, $domain);
+
+// Standalone mode: validate a license key (phone-home revocation/plan check)
+$valid  = Vizor::licenseKeys()->validate($licenseKey, $domain);
+$result = Vizor::licenseKeys()->validateDetailed($licenseKey, $domain);
 ```
 
-### Analytics
-
-```php
-$overview   = Vizor::analytics()->overview(days: 30);
-$views      = Vizor::analytics()->viewsOverTime(days: 7);
-$top        = Vizor::analytics()->topContent(days: 30, limit: 5);
-$engagement = Vizor::analytics()->engagement(days: 30);
-$summary    = Vizor::analytics()->contentSummary($contentId);
-$gaze       = Vizor::analytics()->gazeData($contentId);
-```
-
-### API Keys
-
-```php
-$keys = Vizor::apiKeys()->list();
-$key  = Vizor::apiKeys()->create('Production Key', domains: ['example.com']);
-$valid = Vizor::apiKeys()->validate($keyString); // bool
-Vizor::apiKeys()->revoke($id);
-```
-
-### License Keys
-
-```php
-$keys  = Vizor::licenseKeys()->list();
-$key   = Vizor::licenseKeys()->generate(domains: ['example.com'], tier: 'pro');
-$valid = Vizor::licenseKeys()->validate($keyString); // bool
-Vizor::licenseKeys()->revoke($id);
-```
+`$domain` is optional and defaults to the host parsed from `app.url`. The `ValidateVizorLicense` middleware calls these for you and caches the result (`vizor.license_cache_ttl`).
 
 ### Billing
 
 ```php
-$status = Vizor::billing()->status();
-$plans  = Vizor::billing()->plans();
+// Public plan catalog (pricing display)
+$plans = Vizor::billing()->plans();
 ```
 
 ---
