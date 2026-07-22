@@ -4,7 +4,12 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ## [Unreleased]
 
-## 0.2.2 - 2026-07-22
+## 0.3.1 - 2026-07-22
+
+<!-- PROVISIONAL version number: this branch was rebased on top of the v0.3.0
+     player-sync release, so the next release must be > 0.3.0. The final
+     number here is the release owner's call — a one-line change if they
+     decide differently. Entry contents below are otherwise final. -->
 
 ### Fixed
 - SaaS license validation (`ApiKeysApi::validate()`) POSTed to `/api/v1/api-keys/validate`, a route that doesn't exist, so every request 404'd, was swallowed by the catch block, and every paying customer silently got the free tier + watermark. It now hits `POST /api/v1/license/validate` (with the required `domain` field).
@@ -19,6 +24,11 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ### Changed
 - The license-status cache key changed from `vizor_license_valid` (bool) to `vizor_license_status` (array shape, `{valid, tier}`), needed to carry the tier fix above. No action needed — old cache entries simply expire within their TTL and are never read by the new code.
+
+## 0.3.0 - 2026-07-19
+
+### Changed
+- Player version synced to `0.3.0` (`player_version` config default, `player-dist-manifest.json`, and `PlayerScript`'s runtime fallback), applied manually with the exact `sed` rules from `sync-player-version.yml` — the workflow itself could not run automatically because the publishing repo has no `LARAVEL_DISPATCH_TOKEN` set, and this repo does not allow Actions to open PRs. Dist layout unchanged (still `dist/vizor.js` and `dist/register.js`).
 
 ## 0.2.1 - 2026-07-14
 
