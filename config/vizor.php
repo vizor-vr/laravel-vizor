@@ -36,6 +36,9 @@ return [
     'validate_license' => env('VIZOR_VALIDATE_LICENSE', true),
     'license_cache_ttl' => (int) env('VIZOR_LICENSE_CACHE_TTL', 3600),
 
+    // Resolved at request time by ValidateVizorLicense; 'free' until validated.
+    'license_tier' => 'free',
+
     // ──────────────────────────── Broadcasting (optional) ────────────────────────────
     'broadcasting' => [
         'enabled' => env('VIZOR_BROADCASTING', false),

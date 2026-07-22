@@ -187,14 +187,17 @@ Full server-side reactive state with two-way binding. All components use the `Ha
 
 ### Server-Side Control
 
-All video-based Livewire components expose `play()`, `pause()`, and `seek()` methods you can call from other Livewire components or from Blade:
+`VideoPlayer` exposes `play()`, `pause()`, `seek()`, and `setVolume()` as Livewire actions; `CinemaPlayer` exposes `play()`, `pause()`, and `seek()` (`LivePlayer` exposes `play()`/`pause()`); calling one updates the component's own state and calls `$this->dispatch('vizor-command', command: '...')`. The Livewire bridge (`vizorLivewirePlayer` in `resources/js/vizor-alpine.js`) listens for that `vizor-command` event via `Livewire.on()` and forwards it to the underlying player element:
 
 ```blade
-<livewire:vizor-video-player wire:ref="player" src="/video.mp4" />
+<livewire:vizor-video-player src="/video.mp4" />
 
-<button wire:click="$refs.player.play()">Play</button>
-<button wire:click="$refs.player.pause()">Pause</button>
+{{-- From any Livewire component or Alpine: --}}
+<button x-on:click="$dispatch('vizor-command', { command: 'play' })">Play</button>
+<button x-on:click="$dispatch('vizor-command', { command: 'pause' })">Pause</button>
 ```
+
+Livewire shares Alpine's `$dispatch`, so the snippet above works from Alpine anywhere on the page, and equally from `$this->dispatch('vizor-command', command: 'play')` in another Livewire component's PHP. Supported commands: `play`, `pause`, `seek` (with a `time` payload), `setVolume` (with a `volume` payload), and `toggleMute`.
 
 ### Generating Custom Components
 
@@ -431,7 +434,7 @@ Publish the config file with `php artisan vendor:publish --tag=vizor-config`.
 | `license_key` | `VIZOR_LICENSE_KEY` | `null` | Standalone license key |
 | `license_mode` | `VIZOR_LICENSE_MODE` | `saas` | `saas` or `standalone` |
 | `cdn_url` | `VIZOR_CDN_URL` | derived from `player_version` (never `@latest`) | Player script CDN URL |
-| `player_version` | `VIZOR_PLAYER_VERSION` | `0.1.0` | Player version |
+| `player_version` | `VIZOR_PLAYER_VERSION` | `0.3.0` (kept in sync by `sync-player-version.yml`) | Player version |
 | `use_local_assets` | `VIZOR_USE_LOCAL_ASSETS` | `false` | Serve player JS from local assets |
 | `default_format` | -- | `MONO_360` | Default projection format |
 | `default_controls` | -- | `true` | Show controls by default |

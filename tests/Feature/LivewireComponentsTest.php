@@ -96,6 +96,34 @@ describe('VideoPlayer Livewire component', function () {
             ->assertSet('playing', false);
     });
 
+    it('renders content-id and api credentials on the vz-video element', function () {
+        Livewire::test(VideoPlayer::class, [
+            'contentId' => 'cnt_123',
+            'apiKey' => 'vz_live_k',
+            'apiEndpoint' => 'https://api.vizor-vr.com',
+        ])
+            ->assertSee('content-id="cnt_123"', false)
+            ->assertSee('api-key="vz_live_k"', false)
+            ->assertSee('api-endpoint="https://api.vizor-vr.com"', false);
+    });
+
+    it('renders license-key on the vz-video element', function () {
+        Livewire::test(VideoPlayer::class, [
+            'licenseKey' => 'VZR-XXXX',
+        ])
+            ->assertSee('license-key="VZR-XXXX"', false);
+    });
+
+    it('does not render content-id, api-key, license-key, or api-endpoint when unset', function () {
+        Livewire::test(VideoPlayer::class, [
+            'src' => 'video.mp4',
+        ])
+            ->assertDontSee('content-id=', false)
+            ->assertDontSee('api-key=', false)
+            ->assertDontSee('license-key=', false)
+            ->assertDontSee('api-endpoint=', false);
+    });
+
 });
 
 // ══════════════════════════════════════════════════════════════════════

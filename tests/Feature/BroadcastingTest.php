@@ -2,12 +2,14 @@
 
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Vizor\Laravel\Events\PlayerEnded;
 use Vizor\Laravel\Events\PlayerError;
 use Vizor\Laravel\Events\PlayerPause;
 use Vizor\Laravel\Events\PlayerPlay;
 use Vizor\Laravel\Events\PlayerReady;
 use Vizor\Laravel\Events\PlayerTimeUpdate;
+use Vizor\Laravel\Livewire\VideoPlayer;
 
 // ──────────────────────────── Interface / Contract ────────────────────────────
 
@@ -140,4 +142,25 @@ it('events are dispatchable', function () {
     Event::assertDispatched(PlayerError::class);
     Event::assertDispatched(PlayerTimeUpdate::class);
     Event::assertDispatched(PlayerReady::class);
+});
+
+// ──────────────────────────── VideoPlayer::onTimeUpdate() ────────────────────────────
+
+it('broadcasts the actual currentTime and duration on timeupdate', function () {
+    // Livewire views use {{ $slot }} which is only populated when
+    // components are rendered as Blade components with content.
+    // When testing via Livewire::test(), slot is not defined,
+    // so we share an empty default.
+    view()->share('slot', '');
+
+    config(['vizor.broadcasting.enabled' => true]);
+    Event::fake([PlayerTimeUpdate::class]);
+
+    Livewire::test(VideoPlayer::class, ['src' => '/v.mp4'])
+        ->call('onTimeUpdate', 12.5, 60.0);
+
+    Event::assertDispatched(
+        PlayerTimeUpdate::class,
+        fn (PlayerTimeUpdate $event) => $event->currentTime === 12.5 && $event->duration === 60.0
+    );
 });

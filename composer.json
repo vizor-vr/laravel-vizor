@@ -1,8 +1,11 @@
 {
   "name": "vizor-vr/laravel-vizor",
   "description": "Laravel Livewire components for the Vizor VR video player",
+  "type": "library",
   "keywords": ["laravel", "livewire", "vr", "360", "video", "player", "webxr", "alpine"],
   "license": "MIT",
+  "authors": [{ "name": "UTG Networks" }],
+  "support": { "issues": "https://github.com/vizor-vr/laravel-vizor/issues" },
   "require": {
     "php": "^8.2",
     "illuminate/support": "^11.0|^12.0",

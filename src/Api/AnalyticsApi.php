@@ -28,7 +28,7 @@ class AnalyticsApi
      */
     public function viewsOverTime(int $days = 30): array
     {
-        return $this->client->get('/api/v1/analytics/views', ['days' => $days])->json();
+        return $this->client->get('/api/v1/analytics/views-over-time', ['days' => $days])->json();
     }
 
     /**
@@ -61,7 +61,7 @@ class AnalyticsApi
      */
     public function contentSummary(string $contentId, int $days = 30): array
     {
-        return $this->client->get("/api/v1/analytics/content/{$contentId}", ['days' => $days])->json();
+        return $this->client->get("/api/v1/analytics/summary/{$contentId}", ['days' => $days])->json();
     }
 
     /**
@@ -71,6 +71,6 @@ class AnalyticsApi
      */
     public function gazeData(string $contentId, int $days = 30): array
     {
-        return $this->client->get("/api/v1/analytics/content/{$contentId}/gaze", ['days' => $days])->json();
+        return $this->client->get("/api/v1/analytics/gaze/{$contentId}", ['days' => $days])->json();
     }
 }
