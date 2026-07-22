@@ -57,8 +57,9 @@ class ApiKeysApi
     }
 
     /**
-     * Validate an API key and return the full license result
-     * (valid, tier, features, ...). Invalid/unreachable => valid=false, tier=free.
+     * Validate an API key and return the license result: whether the key
+     * is valid and which tier it grants. Invalid/unreachable => valid=false,
+     * tier=free.
      *
      * @return array{valid: bool, tier: string}
      */
