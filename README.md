@@ -187,7 +187,7 @@ Full server-side reactive state with two-way binding. All components use the `Ha
 
 ### Server-Side Control
 
-`VideoPlayer` and `CinemaPlayer` expose `play()`, `pause()`, and `seek()` as Livewire actions (`LivePlayer` exposes `play()`/`pause()`); calling one updates the component's own state and calls `$this->dispatch('vizor-command', command: '...')`. The Livewire bridge (`vizorLivewirePlayer` in `resources/js/vizor-alpine.js`) listens for that `vizor-command` event via `Livewire.on()` and forwards it to the underlying player element:
+`VideoPlayer` exposes `play()`, `pause()`, `seek()`, and `setVolume()` as Livewire actions; `CinemaPlayer` exposes `play()`, `pause()`, and `seek()` (`LivePlayer` exposes `play()`/`pause()`); calling one updates the component's own state and calls `$this->dispatch('vizor-command', command: '...')`. The Livewire bridge (`vizorLivewirePlayer` in `resources/js/vizor-alpine.js`) listens for that `vizor-command` event via `Livewire.on()` and forwards it to the underlying player element:
 
 ```blade
 <livewire:vizor-video-player src="/video.mp4" />
