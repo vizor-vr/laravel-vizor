@@ -26,37 +26,38 @@ class ValidateVizorLicense
             return $next($request);
         }
 
-        $isValid = Cache::remember(
-            'vizor_license_valid',
+        /** @var array{valid: bool, tier: string} $status */
+        $status = Cache::remember(
+            'vizor_license_status',
             config('vizor.license_cache_ttl', 3600),
             fn () => $this->validateLicense(),
         );
 
-        if (! $isValid) {
-            config(['vizor.license_tier' => 'free']);
-        }
+        config(['vizor.license_tier' => $status['valid'] ? $status['tier'] : 'free']);
 
         return $next($request);
     }
 
     /**
      * Run the appropriate license validation depending on the configured mode.
+     *
+     * @return array{valid: bool, tier: string}
      */
-    private function validateLicense(): bool
+    private function validateLicense(): array
     {
         try {
             if (config('vizor.license_mode') === 'saas') {
-                return Vizor::apiKeys()->validate(
+                return Vizor::apiKeys()->validateDetailed(
                     config('vizor.api_key', ''),
                 );
             }
 
-            return Vizor::licenseKeys()->validate(
+            return Vizor::licenseKeys()->validateDetailed(
                 config('vizor.license_key', ''),
             );
         } catch (\Throwable) {
             // Network errors, malformed responses, etc. -- degrade gracefully.
-            return false;
+            return ['valid' => false, 'tier' => 'free'];
         }
     }
 }

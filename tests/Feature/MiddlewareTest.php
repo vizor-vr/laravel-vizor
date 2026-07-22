@@ -30,7 +30,7 @@ it('always calls next middleware regardless of validation outcome', function () 
         '*/api/v1/license/validate' => Http::response(['valid' => false], 200),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
@@ -49,17 +49,17 @@ it('passes through in saas mode with valid API key', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/license/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => true, 'tier' => 'pro'], 200),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
     $response = $middleware->handle($request, fn ($r) => new Response('ok'));
 
     expect($response->getContent())->toBe('ok');
-    expect(config('vizor.license_tier'))->toBeNull();
+    expect(config('vizor.license_tier'))->toBe('pro');
 });
 
 it('degrades to free tier in saas mode with invalid API key', function () {
@@ -73,7 +73,7 @@ it('degrades to free tier in saas mode with invalid API key', function () {
         '*/api/v1/license/validate' => Http::response(['valid' => false], 200),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
@@ -92,17 +92,17 @@ it('validates license key in standalone mode', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/license/validate-standalone' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate-standalone' => Http::response(['valid' => true, 'tier' => 'pro'], 200),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
     $response = $middleware->handle($request, fn ($r) => new Response('ok'));
 
     expect($response->getContent())->toBe('ok');
-    expect(config('vizor.license_tier'))->toBeNull();
+    expect(config('vizor.license_tier'))->toBe('pro');
 });
 
 it('degrades to free tier in standalone mode with invalid license key', function () {
@@ -116,7 +116,7 @@ it('degrades to free tier in standalone mode with invalid license key', function
         '*/api/v1/license/validate-standalone' => Http::response(['valid' => false], 200),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
@@ -136,10 +136,10 @@ it('caches the validation result', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/license/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => true, 'tier' => 'pro'], 200),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
@@ -147,8 +147,8 @@ it('caches the validation result', function () {
     // First call -- should hit the API and cache the result
     $middleware->handle($request, fn ($r) => new Response('ok'));
 
-    expect(Cache::has('vizor_license_valid'))->toBeTrue();
-    expect(Cache::get('vizor_license_valid'))->toBeTrue();
+    expect(Cache::has('vizor_license_status'))->toBeTrue();
+    expect(Cache::get('vizor_license_status'))->toBe(['valid' => true, 'tier' => 'pro']);
 });
 
 it('uses cached result and does not call API again', function () {
@@ -160,10 +160,10 @@ it('uses cached result and does not call API again', function () {
     ]);
 
     // Pre-populate cache with a valid result
-    Cache::put('vizor_license_valid', true, 3600);
+    Cache::put('vizor_license_status', ['valid' => true, 'tier' => 'pro'], 3600);
 
     Http::fake([
-        '*/api/v1/license/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate' => Http::response(['valid' => true, 'tier' => 'pro'], 200),
     ]);
 
     $middleware = new ValidateVizorLicense;
@@ -188,7 +188,7 @@ it('degrades gracefully when validation throws an exception', function () {
         '*/api/v1/license/validate' => Http::response(null, 500),
     ]);
 
-    Cache::forget('vizor_license_valid');
+    Cache::forget('vizor_license_status');
 
     $middleware = new ValidateVizorLicense;
     $request = Request::create('/test');
@@ -207,4 +207,32 @@ it('is registered under the vizor.license alias', function () {
 
     expect($middleware)->toHaveKey('vizor.license');
     expect($middleware['vizor.license'])->toBe(ValidateVizorLicense::class);
+});
+
+// ──────────────────────────── License Tier ────────────────────────────
+
+it('sets vizor.license_tier to the validated tier on success', function () {
+    config(['vizor.validate_license' => true, 'vizor.license_mode' => 'saas', 'vizor.api_key' => 'k']);
+    Cache::flush();
+    Http::fake([
+        '*/api/v1/license/validate' => Http::response(['valid' => true, 'tier' => 'pro'], 200),
+    ]);
+
+    $middleware = new ValidateVizorLicense;
+    $middleware->handle(request(), fn ($r) => response('ok'));
+
+    expect(config('vizor.license_tier'))->toBe('pro');
+});
+
+it('sets vizor.license_tier to free on failure', function () {
+    config(['vizor.validate_license' => true, 'vizor.license_mode' => 'saas', 'vizor.api_key' => 'k']);
+    Cache::flush();
+    Http::fake([
+        '*/api/v1/license/validate' => Http::response(['valid' => false, 'tier' => 'free'], 401),
+    ]);
+
+    $middleware = new ValidateVizorLicense;
+    $middleware->handle(request(), fn ($r) => response('ok'));
+
+    expect(config('vizor.license_tier'))->toBe('free');
 });
