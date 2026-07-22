@@ -17,8 +17,8 @@ describe('vizor config defaults', function () {
         expect($this->rawConfig['cdn_url'])->toBeNull();
     });
 
-    it('has default player_version of 0.3.0', function () {
-        expect($this->rawConfig['player_version'])->toBe('0.3.0');
+    it('has default player_version of 0.4.0', function () {
+        expect($this->rawConfig['player_version'])->toBe('0.4.0');
     });
 
     it('has default license_mode of saas', function () {
