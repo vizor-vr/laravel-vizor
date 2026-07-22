@@ -12,12 +12,17 @@ use Vizor\Laravel\Api\LicenseKeysApi;
  * Contract tests: every Api class must hit the REAL Vizor API paths.
  *
  * Http::preventStrayRequests() makes any request to an unfaked (= wrong)
- * URL throw -- but the Api classes here swallow every exception internally,
- * so a regressed path never bubbles up as a loud failure. Instead it shows
- * up as a plain assertion failure on the happy-path tests below (expected
- * valid=true / a real tier, got the "unreachable" fallback instead). That's
- * why every endpoint needs at least one happy-path test against its exact
- * URL -- a wildcard fake would hide the regression entirely.
+ * URL throw. The license Api classes swallow exceptions internally
+ * (validate() / validateDetailed() on ApiKeysApi and LicenseKeysApi), so a
+ * regressed path there never bubbles up as a loud failure -- instead it
+ * shows up as a plain assertion failure on the happy-path tests below
+ * (expected valid=true / a real tier, got the "unreachable" fallback
+ * instead). The analytics/content/billing classes -- and the
+ * list()/create()/revoke()/generate() management methods on
+ * ApiKeysApi/LicenseKeysApi -- do not catch exceptions, so a regressed path
+ * there throws loudly instead. Either way, every endpoint gets at least one
+ * happy-path test against its exact URL -- a wildcard fake would hide the
+ * regression entirely.
  */
 function makeClient(): Client
 {
@@ -274,4 +279,95 @@ describe('Content and Billing Api endpoint paths', function () {
         'status' => ['status', '/api/v1/billing/status'],
         'plans' => ['plans', '/api/v1/billing/plans'],
     ]);
+});
+
+describe('ApiKeys and LicenseKeys management endpoint paths', function () {
+
+    it('lists API keys via GET /api/v1/api-keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/api-keys' => Http::response(['data' => []], 200),
+        ]);
+
+        $result = (new ApiKeysApi(makeClient()))->list();
+
+        expect($result)->toBe(['data' => []]);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/api-keys'
+            && $request->method() === 'GET'
+        );
+    });
+
+    it('creates an API key via POST /api/v1/api-keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/api-keys' => Http::response(['id' => 'key_1', 'rawKey' => 'vz_abc'], 201),
+        ]);
+
+        $result = (new ApiKeysApi(makeClient()))->create('My Key', ['example.com']);
+
+        expect($result)->toBe(['id' => 'key_1', 'rawKey' => 'vz_abc']);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/api-keys'
+            && $request->method() === 'POST'
+            && $request['name'] === 'My Key'
+            && $request['domains'] === ['example.com']
+        );
+    });
+
+    it('revokes an API key via DELETE /api/v1/api-keys/{id}', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/api-keys/key_1' => Http::response(['id' => 'key_1', 'active' => false], 200),
+        ]);
+
+        $result = (new ApiKeysApi(makeClient()))->revoke('key_1');
+
+        expect($result)->toBe(['id' => 'key_1', 'active' => false]);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/api-keys/key_1'
+            && $request->method() === 'DELETE'
+        );
+    });
+
+    it('lists license keys via GET /api/v1/license-keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license-keys' => Http::response(['data' => []], 200),
+        ]);
+
+        $result = (new LicenseKeysApi(makeClient()))->list();
+
+        expect($result)->toBe(['data' => []]);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/license-keys'
+            && $request->method() === 'GET'
+        );
+    });
+
+    it('generates a license key via POST /api/v1/license-keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license-keys' => Http::response(['id' => 'lic_1', 'tier' => 'pro', 'rawKey' => 'VZR-XXXX'], 200),
+        ]);
+
+        $result = (new LicenseKeysApi(makeClient()))->generate(['example.com'], 'pro');
+
+        expect($result)->toBe(['id' => 'lic_1', 'tier' => 'pro', 'rawKey' => 'VZR-XXXX']);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/license-keys'
+            && $request->method() === 'POST'
+            && $request['domains'] === ['example.com']
+            && $request['tier'] === 'pro'
+        );
+    });
+
+    it('revokes a license key via DELETE /api/v1/license-keys/{id}', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license-keys/lic_1' => Http::response(['success' => true], 200),
+        ]);
+
+        $result = (new LicenseKeysApi(makeClient()))->revoke('lic_1');
+
+        expect($result)->toBe(['success' => true]);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/license-keys/lic_1'
+            && $request->method() === 'DELETE'
+        );
+    });
 });
