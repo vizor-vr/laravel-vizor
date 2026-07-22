@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Http;
 use Vizor\Laravel\Api\AnalyticsApi;
 use Vizor\Laravel\Api\ApiKeysApi;
+use Vizor\Laravel\Api\BillingApi;
 use Vizor\Laravel\Api\Client;
+use Vizor\Laravel\Api\ContentApi;
 use Vizor\Laravel\Api\LicenseKeysApi;
 
 /**
@@ -173,5 +175,103 @@ describe('Api endpoint paths', function () {
         'engagement' => ['engagement', [30], '/api/v1/analytics/engagement'],
         'content summary' => ['contentSummary', ['abc123', 30], '/api/v1/analytics/summary/abc123'],
         'gaze data' => ['gazeData', ['abc123', 30], '/api/v1/analytics/gaze/abc123'],
+    ]);
+});
+
+describe('Content and Billing Api endpoint paths', function () {
+
+    it('lists content via GET /api/v1/content with query filters', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/content*' => Http::response(['data' => []], 200),
+        ]);
+
+        $result = (new ContentApi(makeClient()))->list('space', 10, 5, ['format' => 'video']);
+
+        expect($result)->toBe(['data' => []]);
+        Http::assertSent(fn ($request) => $request->method() === 'GET'
+            && str_starts_with($request->url(), 'https://api.vizor-vr.test/api/v1/content?')
+            && $request['search'] === 'space'
+            && $request['limit'] === 10
+            && $request['offset'] === 5
+            && $request['format'] === 'video'
+        );
+    });
+
+    it('gets a single content item via GET /api/v1/content/{id}', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/content/abc123' => Http::response(['id' => 'abc123'], 200),
+        ]);
+
+        $result = (new ContentApi(makeClient()))->get('abc123');
+
+        expect($result)->toBe(['id' => 'abc123']);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content/abc123'
+            && $request->method() === 'GET'
+        );
+    });
+
+    it('creates a content item via POST /api/v1/content', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/content' => Http::response(['id' => 'new1'], 201),
+        ]);
+
+        $result = (new ContentApi(makeClient()))->create('My Title', 'video', ['description' => 'desc']);
+
+        expect($result)->toBe(['id' => 'new1']);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content'
+            && $request->method() === 'POST'
+            && $request['title'] === 'My Title'
+            && $request['format'] === 'video'
+            && $request['description'] === 'desc'
+        );
+    });
+
+    it('updates a content item via PATCH /api/v1/content/{id}', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/content/abc123' => Http::response(['id' => 'abc123', 'title' => 'Updated'], 200),
+        ]);
+
+        $result = (new ContentApi(makeClient()))->update('abc123', ['title' => 'Updated']);
+
+        expect($result)->toBe(['id' => 'abc123', 'title' => 'Updated']);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content/abc123'
+            && $request->method() === 'PATCH'
+            && $request['title'] === 'Updated'
+        );
+    });
+
+    it('deletes a content item via DELETE /api/v1/content/{id}', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/content/abc123' => Http::response(['deleted' => true], 200),
+        ]);
+
+        $result = (new ContentApi(makeClient()))->delete('abc123');
+
+        expect($result)->toBe(['deleted' => true]);
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content/abc123'
+            && $request->method() === 'DELETE'
+        );
+    });
+
+    it('hits the real billing routes', function (string $method, string $expectedPath) {
+        Http::preventStrayRequests();
+        Http::fake([
+            "https://api.vizor-vr.test{$expectedPath}" => Http::response(['data' => []], 200),
+        ]);
+
+        $result = (new BillingApi(makeClient()))->{$method}();
+
+        expect($result)->toBe(['data' => []]);
+        Http::assertSent(fn ($request) => $request->method() === 'GET'
+            && $request->url() === "https://api.vizor-vr.test{$expectedPath}"
+        );
+    })->with([
+        'status' => ['status', '/api/v1/billing/status'],
+        'plans' => ['plans', '/api/v1/billing/plans'],
     ]);
 });
