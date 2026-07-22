@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Http;
 use Vizor\Laravel\Api\ApiKeysApi;
 use Vizor\Laravel\Api\Client;
+use Vizor\Laravel\Api\LicenseKeysApi;
 
 /**
  * Contract tests: every Api class must hit the REAL Vizor API paths.
@@ -92,5 +93,52 @@ describe('Api endpoint paths', function () {
         $result = (new ApiKeysApi(makeClient()))->validateDetailed('vz_live_abc', 'example.com');
 
         expect($result)->toBe(['valid' => true, 'tier' => 'free']);
+    });
+
+    it('validates standalone keys against POST /api/v1/license/validate-standalone', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license/validate-standalone' => Http::response([
+                'valid' => true, 'tier' => 'enterprise', 'features' => [],
+            ], 200),
+        ]);
+
+        $result = (new LicenseKeysApi(makeClient()))->validate('VZR-XXXX', 'example.com');
+
+        expect($result)->toBeTrue();
+        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/license/validate-standalone'
+            && $request['licenseKey'] === 'VZR-XXXX'
+            && $request['domain'] === 'example.com'
+        );
+    });
+
+    it('derives the default domain from app.url when no domain is given for standalone keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license/validate-standalone' => Http::response([
+                'valid' => true, 'tier' => 'enterprise',
+            ], 200),
+        ]);
+
+        // No $domain argument -- this is how the middleware calls it in production.
+        $result = (new LicenseKeysApi(makeClient()))->validate('VZR-XXXX');
+
+        expect($result)->toBeTrue();
+        Http::assertSent(fn ($request) => $request['licenseKey'] === 'VZR-XXXX'
+            && $request['domain'] === 'localhost' // Testbench's app.url defaults to http://localhost
+        );
+    });
+
+    it('validateDetailed() returns the full valid/tier result for standalone keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license/validate-standalone' => Http::response([
+                'valid' => true, 'tier' => 'enterprise',
+            ], 200),
+        ]);
+
+        $result = (new LicenseKeysApi(makeClient()))->validateDetailed('VZR-XXXX', 'example.com');
+
+        expect($result)->toBe(['valid' => true, 'tier' => 'enterprise']);
     });
 });

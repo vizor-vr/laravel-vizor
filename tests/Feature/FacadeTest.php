@@ -160,8 +160,8 @@ describe('Vizor Facade', function () {
         expect($result)->toBeTrue();
 
         Http::assertSent(fn ($request) => $request->method() === 'POST'
-            && str_contains($request->url(), '/api/v1/license-keys/validate')
-            && $request['key'] === 'test-key'
+            && str_contains($request->url(), '/api/v1/license/validate-standalone')
+            && $request['licenseKey'] === 'test-key'
         );
     });
 

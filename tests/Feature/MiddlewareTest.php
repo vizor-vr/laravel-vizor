@@ -92,7 +92,7 @@ it('validates license key in standalone mode', function () {
     ]);
 
     Http::fake([
-        '*/api/v1/license-keys/validate' => Http::response(['valid' => true], 200),
+        '*/api/v1/license/validate-standalone' => Http::response(['valid' => true], 200),
     ]);
 
     Cache::forget('vizor_license_valid');
@@ -113,7 +113,7 @@ it('degrades to free tier in standalone mode with invalid license key', function
     ]);
 
     Http::fake([
-        '*/api/v1/license-keys/validate' => Http::response(['valid' => false], 200),
+        '*/api/v1/license/validate-standalone' => Http::response(['valid' => false], 200),
     ]);
 
     Cache::forget('vizor_license_valid');
