@@ -1,26 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
-use Vizor\Laravel\Api\AnalyticsApi;
 use Vizor\Laravel\Api\ApiKeysApi;
 use Vizor\Laravel\Api\BillingApi;
 use Vizor\Laravel\Api\Client;
-use Vizor\Laravel\Api\ContentApi;
 use Vizor\Laravel\Api\LicenseKeysApi;
 
 /**
  * Contract tests: every Api class must hit the REAL Vizor API paths.
  *
  * Http::preventStrayRequests() makes any request to an unfaked (= wrong)
- * URL throw. The license Api classes swallow exceptions internally
- * (validate() / validateDetailed() on ApiKeysApi and LicenseKeysApi), so a
+ * URL throw. The license validation methods (validate() / validateDetailed()
+ * on ApiKeysApi and LicenseKeysApi) swallow exceptions internally, so a
  * regressed path there never bubbles up as a loud failure -- instead it
  * shows up as a plain assertion failure on the happy-path tests below
  * (expected valid=true / a real tier, got the "unreachable" fallback
- * instead). The analytics/content/billing classes -- and the
- * list()/create()/revoke()/generate() management methods on
- * ApiKeysApi/LicenseKeysApi -- do not catch exceptions, so a regressed path
- * there throws loudly instead. Either way, every endpoint gets at least one
+ * instead). BillingApi does not catch exceptions, so a regressed path there
+ * throws loudly instead. Either way, every endpoint gets at least one
  * happy-path test against its exact URL -- a wildcard fake would hide the
  * regression entirely.
  */
@@ -164,104 +160,9 @@ describe('Api endpoint paths', function () {
         expect($result)->toBe(['valid' => true, 'tier' => 'free']);
     });
 
-    it('hits the real analytics routes', function (string $method, array $args, string $expectedPath) {
-        Http::preventStrayRequests();
-        Http::fake(["https://api.vizor-vr.test{$expectedPath}*" => Http::response(['data' => []], 200)]);
-
-        (new AnalyticsApi(makeClient()))->{$method}(...$args);
-
-        Http::assertSent(fn ($request) => $request->method() === 'GET'
-            && str_starts_with($request->url(), "https://api.vizor-vr.test{$expectedPath}?")
-        );
-    })->with([
-        'overview' => ['overview', [30], '/api/v1/analytics/overview'],
-        'views over time' => ['viewsOverTime', [30], '/api/v1/analytics/views-over-time'],
-        'top content' => ['topContent', [30, 10], '/api/v1/analytics/top-content'],
-        'engagement' => ['engagement', [30], '/api/v1/analytics/engagement'],
-        'content summary' => ['contentSummary', ['abc123', 30], '/api/v1/analytics/summary/abc123'],
-        'gaze data' => ['gazeData', ['abc123', 30], '/api/v1/analytics/gaze/abc123'],
-    ]);
 });
 
-describe('Content and Billing Api endpoint paths', function () {
-
-    it('lists content via GET /api/v1/content with query filters', function () {
-        Http::preventStrayRequests();
-        Http::fake([
-            'https://api.vizor-vr.test/api/v1/content*' => Http::response(['data' => []], 200),
-        ]);
-
-        $result = (new ContentApi(makeClient()))->list('space', 10, 5, ['format' => 'video']);
-
-        expect($result)->toBe(['data' => []]);
-        Http::assertSent(fn ($request) => $request->method() === 'GET'
-            && str_starts_with($request->url(), 'https://api.vizor-vr.test/api/v1/content?')
-            && $request['search'] === 'space'
-            && $request['limit'] === 10
-            && $request['offset'] === 5
-            && $request['format'] === 'video'
-        );
-    });
-
-    it('gets a single content item via GET /api/v1/content/{id}', function () {
-        Http::preventStrayRequests();
-        Http::fake([
-            'https://api.vizor-vr.test/api/v1/content/abc123' => Http::response(['id' => 'abc123'], 200),
-        ]);
-
-        $result = (new ContentApi(makeClient()))->get('abc123');
-
-        expect($result)->toBe(['id' => 'abc123']);
-        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content/abc123'
-            && $request->method() === 'GET'
-        );
-    });
-
-    it('creates a content item via POST /api/v1/content', function () {
-        Http::preventStrayRequests();
-        Http::fake([
-            'https://api.vizor-vr.test/api/v1/content' => Http::response(['id' => 'new1'], 201),
-        ]);
-
-        $result = (new ContentApi(makeClient()))->create('My Title', 'video', ['description' => 'desc']);
-
-        expect($result)->toBe(['id' => 'new1']);
-        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content'
-            && $request->method() === 'POST'
-            && $request['title'] === 'My Title'
-            && $request['format'] === 'video'
-            && $request['description'] === 'desc'
-        );
-    });
-
-    it('updates a content item via PATCH /api/v1/content/{id}', function () {
-        Http::preventStrayRequests();
-        Http::fake([
-            'https://api.vizor-vr.test/api/v1/content/abc123' => Http::response(['id' => 'abc123', 'title' => 'Updated'], 200),
-        ]);
-
-        $result = (new ContentApi(makeClient()))->update('abc123', ['title' => 'Updated']);
-
-        expect($result)->toBe(['id' => 'abc123', 'title' => 'Updated']);
-        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content/abc123'
-            && $request->method() === 'PATCH'
-            && $request['title'] === 'Updated'
-        );
-    });
-
-    it('deletes a content item via DELETE /api/v1/content/{id}', function () {
-        Http::preventStrayRequests();
-        Http::fake([
-            'https://api.vizor-vr.test/api/v1/content/abc123' => Http::response(['deleted' => true], 200),
-        ]);
-
-        $result = (new ContentApi(makeClient()))->delete('abc123');
-
-        expect($result)->toBe(['deleted' => true]);
-        Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/content/abc123'
-            && $request->method() === 'DELETE'
-        );
-    });
+describe('Billing Api endpoint paths', function () {
 
     it('hits the real billing routes', function (string $method, string $expectedPath) {
         Http::preventStrayRequests();

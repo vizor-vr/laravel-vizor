@@ -2,11 +2,9 @@
 
 namespace Vizor\Laravel;
 
-use Vizor\Laravel\Api\AnalyticsApi;
 use Vizor\Laravel\Api\ApiKeysApi;
 use Vizor\Laravel\Api\BillingApi;
 use Vizor\Laravel\Api\Client;
-use Vizor\Laravel\Api\ContentApi;
 use Vizor\Laravel\Api\LicenseKeysApi;
 
 /**
@@ -16,10 +14,6 @@ use Vizor\Laravel\Api\LicenseKeysApi;
 class VizorManager
 {
     private ?Client $client = null;
-
-    private ?ContentApi $contentApi = null;
-
-    private ?AnalyticsApi $analyticsApi = null;
 
     private ?ApiKeysApi $apiKeysApi = null;
 
@@ -43,23 +37,7 @@ class VizorManager
     }
 
     /**
-     * Content API methods.
-     */
-    public function content(): ContentApi
-    {
-        return $this->contentApi ??= new ContentApi($this->client());
-    }
-
-    /**
-     * Analytics API methods.
-     */
-    public function analytics(): AnalyticsApi
-    {
-        return $this->analyticsApi ??= new AnalyticsApi($this->client());
-    }
-
-    /**
-     * API Keys management methods.
+     * API key validation methods.
      */
     public function apiKeys(): ApiKeysApi
     {
@@ -67,7 +45,7 @@ class VizorManager
     }
 
     /**
-     * License Keys management methods.
+     * License key validation methods.
      */
     public function licenseKeys(): LicenseKeysApi
     {
