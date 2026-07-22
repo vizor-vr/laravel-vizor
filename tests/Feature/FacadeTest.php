@@ -77,13 +77,13 @@ describe('Vizor Facade', function () {
         );
     });
 
-    it('sends GET /api/v1/analytics/views on analytics()->viewsOverTime()', function () {
+    it('sends GET /api/v1/analytics/views-over-time on analytics()->viewsOverTime()', function () {
         Http::fake(['*' => Http::response(['ok' => true], 200)]);
 
         Vizor::analytics()->viewsOverTime(14);
 
         Http::assertSent(fn ($request) => $request->method() === 'GET'
-            && str_contains($request->url(), '/api/v1/analytics/views')
+            && str_contains($request->url(), '/api/v1/analytics/views-over-time')
             && str_contains($request->url(), 'days=14')
         );
     });

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
+use Vizor\Laravel\Api\AnalyticsApi;
 use Vizor\Laravel\Api\ApiKeysApi;
 use Vizor\Laravel\Api\Client;
 use Vizor\Laravel\Api\LicenseKeysApi;
@@ -107,6 +108,7 @@ describe('Api endpoint paths', function () {
 
         expect($result)->toBeTrue();
         Http::assertSent(fn ($request) => $request->url() === 'https://api.vizor-vr.test/api/v1/license/validate-standalone'
+            && $request->method() === 'POST'
             && $request['licenseKey'] === 'VZR-XXXX'
             && $request['domain'] === 'example.com'
         );
@@ -141,4 +143,35 @@ describe('Api endpoint paths', function () {
 
         expect($result)->toBe(['valid' => true, 'tier' => 'enterprise']);
     });
+
+    it('validateDetailed() defaults tier to free when the response omits it for standalone keys', function () {
+        Http::preventStrayRequests();
+        Http::fake([
+            'https://api.vizor-vr.test/api/v1/license/validate-standalone' => Http::response([
+                'valid' => true,
+            ], 200),
+        ]);
+
+        $result = (new LicenseKeysApi(makeClient()))->validateDetailed('VZR-XXXX', 'example.com');
+
+        expect($result)->toBe(['valid' => true, 'tier' => 'free']);
+    });
+
+    it('hits the real analytics routes', function (string $method, array $args, string $expectedPath) {
+        Http::preventStrayRequests();
+        Http::fake(["https://api.vizor-vr.test{$expectedPath}*" => Http::response(['data' => []], 200)]);
+
+        (new AnalyticsApi(makeClient()))->{$method}(...$args);
+
+        Http::assertSent(fn ($request) => str_starts_with(
+            $request->url(), "https://api.vizor-vr.test{$expectedPath}"
+        ));
+    })->with([
+        'overview'       => ['overview', [30], '/api/v1/analytics/overview'],
+        'views over time' => ['viewsOverTime', [30], '/api/v1/analytics/views-over-time'],
+        'top content'    => ['topContent', [30, 10], '/api/v1/analytics/top-content'],
+        'engagement'     => ['engagement', [30], '/api/v1/analytics/engagement'],
+        'content summary' => ['contentSummary', ['abc123', 30], '/api/v1/analytics/summary/abc123'],
+        'gaze data'      => ['gazeData', ['abc123', 30], '/api/v1/analytics/gaze/abc123'],
+    ]);
 });
