@@ -4,6 +4,10 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ## [Unreleased]
 
+### Removed
+- **BREAKING:** `Vizor::content()` (`ContentApi`) and `Vizor::analytics()` (`AnalyticsApi`), plus the management methods `ApiKeysApi::list()/create()/revoke()`, `LicenseKeysApi::list()/generate()/revoke()`, and `BillingApi::status()`. A 2026-07-22 audit of the Vizor API proved every one of these routes requires a Clerk user session (`requireAuth`, most also admin/owner role) and the API has no dual-auth path — the package's `x-api-key` header can never authenticate them, so all 18 methods returned 401 in production regardless of input. The surviving surface is exactly what works server-side: `ApiKeysApi::validate()/validateDetailed()`, `LicenseKeysApi::validate()/validateDetailed()` (key posted in the body to the public license endpoints), and `BillingApi::plans()` (public route). Server-side content/analytics access may return if the API grows scoped `x-api-key` auth for those routes.
+- The dead `tier` parameter died with `LicenseKeysApi::generate()`: the API's Zod schema silently stripped it and derives tier from the organization's plan server-side, so it never had any effect.
+
 ## 0.4.0 - 2026-07-22
 
 ### Added
