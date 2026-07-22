@@ -147,6 +147,10 @@ it('events are dispatchable', function () {
 // ──────────────────────────── VideoPlayer::onTimeUpdate() ────────────────────────────
 
 it('broadcasts the actual currentTime and duration on timeupdate', function () {
+    // Livewire views use {{ $slot }} which is only populated when
+    // components are rendered as Blade components with content.
+    // When testing via Livewire::test(), slot is not defined,
+    // so we share an empty default.
     view()->share('slot', '');
 
     config(['vizor.broadcasting.enabled' => true]);
@@ -157,6 +161,6 @@ it('broadcasts the actual currentTime and duration on timeupdate', function () {
 
     Event::assertDispatched(
         PlayerTimeUpdate::class,
-        fn (PlayerTimeUpdate $event) => (float) $event->currentTime === 12.5 && (float) $event->duration === 60.0
+        fn (PlayerTimeUpdate $event) => $event->currentTime === 12.5 && $event->duration === 60.0
     );
 });
