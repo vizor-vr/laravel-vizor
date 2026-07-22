@@ -163,15 +163,15 @@ describe('Api endpoint paths', function () {
 
         (new AnalyticsApi(makeClient()))->{$method}(...$args);
 
-        Http::assertSent(fn ($request) => str_starts_with(
-            $request->url(), "https://api.vizor-vr.test{$expectedPath}"
-        ));
+        Http::assertSent(fn ($request) => $request->method() === 'GET'
+            && str_starts_with($request->url(), "https://api.vizor-vr.test{$expectedPath}?")
+        );
     })->with([
-        'overview'       => ['overview', [30], '/api/v1/analytics/overview'],
+        'overview' => ['overview', [30], '/api/v1/analytics/overview'],
         'views over time' => ['viewsOverTime', [30], '/api/v1/analytics/views-over-time'],
-        'top content'    => ['topContent', [30, 10], '/api/v1/analytics/top-content'],
-        'engagement'     => ['engagement', [30], '/api/v1/analytics/engagement'],
+        'top content' => ['topContent', [30, 10], '/api/v1/analytics/top-content'],
+        'engagement' => ['engagement', [30], '/api/v1/analytics/engagement'],
         'content summary' => ['contentSummary', ['abc123', 30], '/api/v1/analytics/summary/abc123'],
-        'gaze data'      => ['gazeData', ['abc123', 30], '/api/v1/analytics/gaze/abc123'],
+        'gaze data' => ['gazeData', ['abc123', 30], '/api/v1/analytics/gaze/abc123'],
     ]);
 });
