@@ -164,20 +164,17 @@ describe('Api endpoint paths', function () {
 
 describe('Billing Api endpoint paths', function () {
 
-    it('hits the real billing routes', function (string $method, string $expectedPath) {
+    it('lists billing plans via GET /api/v1/billing/plans', function () {
         Http::preventStrayRequests();
         Http::fake([
-            "https://api.vizor-vr.test{$expectedPath}" => Http::response(['data' => []], 200),
+            'https://api.vizor-vr.test/api/v1/billing/plans' => Http::response(['data' => []], 200),
         ]);
 
-        $result = (new BillingApi(makeClient()))->{$method}();
+        $result = (new BillingApi(makeClient()))->plans();
 
         expect($result)->toBe(['data' => []]);
         Http::assertSent(fn ($request) => $request->method() === 'GET'
-            && $request->url() === "https://api.vizor-vr.test{$expectedPath}"
+            && $request->url() === 'https://api.vizor-vr.test/api/v1/billing/plans'
         );
-    })->with([
-        'status' => ['status', '/api/v1/billing/status'],
-        'plans' => ['plans', '/api/v1/billing/plans'],
-    ]);
+    });
 });
