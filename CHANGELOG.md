@@ -4,17 +4,7 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 
 ## [Unreleased]
 
-## 0.3.1 - 2026-07-22
-
-<!-- PROVISIONAL version number: this branch was rebased on top of the v0.3.0
-     player-sync release, so the next release must be > 0.3.0. The final
-     number here is the release owner's call — a one-line change if they
-     decide differently. Entry contents below are otherwise final.
-     Decision inputs: this release also removes a shipped public class
-     (VizorCors, present through v0.3.0) and adds new public methods
-     (validateDetailed() on both API classes) — both argue for 0.4.0 under
-     0.x semver; 0.3.1 remains viable if the owner prefers the fixes-release
-     signal. -->
+## 0.4.0 - 2026-07-22
 
 ### Added
 - `ApiKeysApi::validateDetailed()` and `LicenseKeysApi::validateDetailed()`, returning the full `{valid, tier}` license result (the existing `validate()` methods now delegate to these internally).
