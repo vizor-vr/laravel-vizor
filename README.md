@@ -412,10 +412,6 @@ Publish the config file with `php artisan vendor:publish --tag=vizor-config`.
 | `cdn_url` | `VIZOR_CDN_URL` | derived from `player_version` (never `@latest`) | Player script CDN URL |
 | `player_version` | `VIZOR_PLAYER_VERSION` | `0.3.0` (kept in sync by `sync-player-version.yml`) | Player version |
 | `use_local_assets` | `VIZOR_USE_LOCAL_ASSETS` | `false` | Serve player JS from local assets |
-| `default_format` | -- | `MONO_360` | Default projection format |
-| `default_controls` | -- | `true` | Show controls by default |
-| `default_muted` | -- | `false` | Start muted by default |
-| `primary_color` | `VIZOR_PRIMARY_COLOR` | `#f43f5e` | Brand primary color |
 | `brand_name` | `VIZOR_BRAND_NAME` | `null` | Custom brand name |
 | `brand_logo` | `VIZOR_BRAND_LOGO` | `null` | Custom brand logo URL |
 | `validate_license` | `VIZOR_VALIDATE_LICENSE` | `true` | Enable license validation |

@@ -22,13 +22,7 @@ return [
     // @vizorScripts on the pages that actually embed a player.
     'auto_inject' => env('VIZOR_AUTO_INJECT', false),
 
-    // ──────────────────────────── Defaults ────────────────────────────
-    'default_format' => 'MONO_360',
-    'default_controls' => true,
-    'default_muted' => false,
-
     // ──────────────────────────── Theming ────────────────────────────
-    'primary_color' => env('VIZOR_PRIMARY_COLOR', '#f43f5e'),
     'brand_name' => env('VIZOR_BRAND_NAME'),
     'brand_logo' => env('VIZOR_BRAND_LOGO'),
 

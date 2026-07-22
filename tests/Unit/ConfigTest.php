@@ -42,20 +42,14 @@ describe('vizor config defaults', function () {
         expect($this->rawConfig['filament']['enabled'])->toBeFalse();
     });
 
-    it('has default primary_color of #f43f5e', function () {
-        expect($this->rawConfig['primary_color'])->toBe('#f43f5e');
-    });
-
-    it('has default default_format of MONO_360', function () {
-        expect($this->rawConfig['default_format'])->toBe('MONO_360');
-    });
-
-    it('has default default_controls of true', function () {
-        expect($this->rawConfig['default_controls'])->toBeTrue();
-    });
-
-    it('has default default_muted of false', function () {
-        expect($this->rawConfig['default_muted'])->toBeFalse();
+    it('ships no player-default or theming-color keys (props are the only knobs)', function () {
+        // default_format / default_controls / default_muted / primary_color were
+        // documented but never read by any rendering path — removed pre-1.0.
+        expect($this->rawConfig)
+            ->not->toHaveKey('default_format')
+            ->not->toHaveKey('default_controls')
+            ->not->toHaveKey('default_muted')
+            ->not->toHaveKey('primary_color');
     });
 
     it('has broadcasting channel_prefix of vizor', function () {

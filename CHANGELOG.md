@@ -7,6 +7,9 @@ All notable changes to `vizor-vr/laravel-vizor` will be documented in this file.
 ### Fixed
 - `BillingApi::plans()` threw `TypeError` when the API returned an empty response body; now falls back to `[]`.
 
+### Removed
+- Config keys `default_format`, `default_controls`, `default_muted`, and `primary_color` (with `VIZOR_PRIMARY_COLOR`): documented as working options but never read by any rendering path. Player defaults come from the player itself and from component props; forcing `format`/`primary-color` attributes from config would override content-API metadata and player-side theming.
+
 ## 0.5.0 - 2026-07-22
 
 ### Removed

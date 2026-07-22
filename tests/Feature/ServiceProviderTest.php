@@ -21,10 +21,7 @@ describe('VizorServiceProvider', function () {
     it('merges package config into the application config', function () {
         expect(config('vizor'))->toBeArray();
         expect(config('vizor.api_url'))->toBe('https://api.vizor-vr.test');
-        expect(config('vizor.default_format'))->toBe('MONO_360');
-        expect(config('vizor.default_controls'))->toBeTrue();
-        expect(config('vizor.default_muted'))->toBeFalse();
-        expect(config('vizor.primary_color'))->toBe('#f43f5e');
+        expect(config('vizor.player_version'))->not->toBeNull();
     });
 
     // ──────────────────────────── Singleton ────────────────────────────
